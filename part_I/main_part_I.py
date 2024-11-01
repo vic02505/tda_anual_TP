@@ -39,8 +39,8 @@ def play_game(coins_list):
     return sophia_coins, mateo_coins
 
 
-def coins_game(coins_list_name):
-    coins_list = datasets_parser.get_coins_list(coins_list_name)
+def coins_game(coins_list):
+    #coins_list = datasets_parser.get_coins_list(coins_list_name)
     sophia_coins, mateo_coins = play_game(coins_list)
     return sophia_coins
 

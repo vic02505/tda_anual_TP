@@ -17,10 +17,10 @@ sns.set_theme()
 
 # La variable x van a ser los valores del eje x de los gráficos en todo el notebook
 # Tamaño mínimo=100, tamaño máximo=10kk, cantidad de puntos=20
-x = np.linspace(100, 10_000_000, 20000).astype(int)
+x = np.linspace(100,10_000_000, 100).astype(int)
 
 
-results = time_algorithm(coins_game, x, lambda s: [get_coins_list("20000.txt")])
+results = time_algorithm(coins_game, x, lambda s: [get_coins_list("1000.txt")])
 
 
 ax: plt.Axes
