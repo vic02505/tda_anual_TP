@@ -1,8 +1,8 @@
-from libs import datasets_parser
+from part_I.libs import datasets_parser
 
 #Agregar parametro que indique si se quiere ordenar la lista o no. Esto no sirve para comparar
 #resultados.
-def coins_game(coins_list):
+def play_game(coins_list):
     sophia_coins = []
     mateo_coins = []
     
@@ -16,7 +16,7 @@ def coins_game(coins_list):
         selected_coin = -1
         
         if sophia_is_playing:
-            if coins_list[beginning] < coins_list[end]:
+            if coins_list[beginning] <= coins_list[end]:
                 selected_coin = coins_list[end]
                 end -=1
             else:
@@ -26,7 +26,7 @@ def coins_game(coins_list):
             sophia_coins.append(selected_coin)
             sophia_is_playing = False
         else:
-            if coins_list[beginning] > coins_list[end]:
+            if coins_list[beginning] >= coins_list[end]:
                 selected_coin = coins_list[end]
                 end -=1
             else:
@@ -36,13 +36,11 @@ def coins_game(coins_list):
             mateo_coins.append(selected_coin)
             sophia_is_playing = True      
     
-    return (sophia_coins, mateo_coins)
-
-    
-coins_list = datasets_parser.get_coins_list('6.txt')
-sophia_coins, mateo_coins = coins_game(coins_list)
+    return sophia_coins, mateo_coins
 
 
-print(f"Sofia {sum(sophia_coins)}")
-print(f"Mateo {sum(mateo_coins)}")
+def coins_game(coins_list_name):
+    coins_list = datasets_parser.get_coins_list(coins_list_name)
+    sophia_coins, mateo_coins = play_game(coins_list)
+    return sophia_coins
 

@@ -1,7 +1,7 @@
 
 def get_coins_list(file_name):
 
-    with open('datasets_part_I/' + file_name, 'r') as dataset_file:
+    with open('/home/vic/Escritorio/universidad/tda/tp_final/part_I/datasets_part_I/' + file_name, 'r') as dataset_file:
         
         content = dataset_file.read()
         
