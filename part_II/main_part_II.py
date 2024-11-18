@@ -18,3 +18,25 @@ M(i) = valor de moneda en la posicion i
 M(j) = valor de moneda en la posicion j
 
 '''
+
+def coins_game_partII(coins_list):
+
+    coins_list_len = len(coins_list)
+
+    sophia_gains = [0]*(coins_list_len//2)
+    mateo_gains = [0]*(coins_list_len//2)
+
+    sophia_gains[0] = max(coins_list[0], coins_list[-1])
+    mateo_gains[0] = min(coins_list[0], coins_list[-1])
+
+
+
+
+    i = 0
+    j = coins_list_len - 1
+
+    for n in range(1, coins_list_len):
+        #OPT(n) = max(OPT(n-1) + min(M(i), M(j))  , No OPT(n-1) + max(M(i), M(j)) )
+        sophia_gains.append(max(sophia_gains[n-1] + min(coins_list[i], coins_list[j]), 3))
+
+
