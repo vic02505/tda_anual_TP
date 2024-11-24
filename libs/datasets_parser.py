@@ -1,7 +1,9 @@
 
-def get_coins_list(file_name):
+import os
 
-    with open('/home/vic/Escritorio/universidad/tda/tp_final/part_I/datasets_part_I/' + file_name, 'r') as dataset_file:
+def get_coins_list(file_name):
+    
+    with open(os.path.abspath(".") + file_name, 'r') as dataset_file:
         
         content = dataset_file.read()
         
