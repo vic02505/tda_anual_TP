@@ -2,7 +2,7 @@ import os
 
 def get_coins_list(file_name):
     
-    with open(os.path.abspath(".") + file_name, 'r') as dataset_file:
+    with open(file_name, 'r') as dataset_file:
         
         content = dataset_file.read()
         

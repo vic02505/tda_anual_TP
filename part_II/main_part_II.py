@@ -44,7 +44,7 @@ En el ejemplo de la matriz anterios, se empieza calculando el OPT(0,5) = M(0,5)
 
 '''
 
-import datasets_parser
+from datasets_parser import get_coins_list
 
 
 def best_next_coin(ini, fin, gains_matrix, coins_list):
@@ -62,7 +62,7 @@ def best_next_coin(ini, fin, gains_matrix, coins_list):
 def play_coins_game_partII(coins_list, gains_matrix, i, j):
 
     if gains_matrix[i][j] == 0:
-        gains_matrix[i][j] = max(coins_list[i] + best_next_coin(i+1, j, gains_matrix, coins_list), coins_list[j] + best_next_coin(i+1, j, gains_matrix, coins_list))
+        gains_matrix[i][j] = max(coins_list[i] + best_next_coin(i+1, j, gains_matrix, coins_list), coins_list[j] + best_next_coin(i, j-1, gains_matrix, coins_list))
         return gains_matrix[i][j]
     else:
         return gains_matrix[i][j]
@@ -77,56 +77,16 @@ def coins_game_partII(coins_list):
 
     play_coins_game_partII(coins_list, gains_matrix, 0, coins_list_len-1)
     
-    print(gains_matrix)
+    print("Ganancia total para Sofia: ", gains_matrix[0][coins_list_len-1])
+
+    # print(gains_matrix)
 
 
 def start_game():
-    name_dataset = "5.txt"
-    print("a")
-    coins_list = datasets_parser("/datasets_part_II" + "/" + name_dataset)
+    name_dataset = "100.txt"
+    coins_list = get_coins_list("datasets_part_II" + "/" + name_dataset)
+    print("\n")
     coins_game_partII(coins_list)
 
 
 start_game()
-
-'''
-Pseudocodigo:
-
-n = nro de tiro
-
-OPT(n) = max(OPT(n-1) + minimo entre los 2 extremos  , No OPT(n-1) + maximo entre los 2 extremos )
-
-El no OPT(n-1) es la ganancia acumulada de mateo.
-
-Es lo mismo que poner:
-
-OPT(n) = max(OPT(n-1) + min(M(i), M(j))  , No OPT(n-1) + max(M(i), M(j)) )
-
-i = inicio de la lista de monedas
-j = fin de la lista 
-
-M(i) = valor de moneda en la posicion i 
-M(j) = valor de moneda en la posicion j
-
-'''
-
-# def coins_game_partII(coins_list):
-
-#     coins_list_len = len(coins_list)
-
-#     sophia_gains = [0]*(coins_list_len//2)
-#     mateo_gains = [0]*(coins_list_len//2)
-
-#     sophia_gains[0] = max(coins_list[0], coins_list[-1])
-#     mateo_gains[0] = min(coins_list[0], coins_list[-1])
-
-
-
-
-#     i = 0
-#     j = coins_list_len - 1
-
-#     for n in range(1, coins_list_len):
-#         #OPT(n) = max(OPT(n-1) + min(M(i), M(j))  , No OPT(n-1) + max(M(i), M(j)) )
-#         sophia_gains.append(max(sophia_gains[n-1] + min(coins_list[i], coins_list[j]), 3))
-
