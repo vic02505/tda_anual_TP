@@ -43,8 +43,7 @@ esa posicion y se va calculando hacia atras hasta generar todos los calculos
 En el ejemplo de la matriz anterios, se empieza calculando el OPT(0,5) = M(0,5)
 
 '''
-
-from datasets_parser import get_coins_list
+from libs import datasets_parser
 
 
 def best_next_coin(ini, fin, gains_matrix, coins_list):
@@ -83,9 +82,8 @@ def coins_game_partII(coins_list):
 
 
 def start_game():
-    name_dataset = "100.txt"
-    coins_list = get_coins_list("datasets_part_II" + "/" + name_dataset)
-    print("\n")
+    dataset_name = "100.txt"
+    coins_list = datasets_parser.get_coins_list(directory_name="datasets_part_II/", file_name=dataset_name)
     coins_game_partII(coins_list)
 
 

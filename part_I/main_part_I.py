@@ -1,4 +1,4 @@
-from part_I.libs import datasets_parser
+from libs import datasets_parser
 
 #Agregar parametro que indique si se quiere ordenar la lista o no. Esto no sirve para comparar
 #resultados.
@@ -39,8 +39,8 @@ def play_game(coins_list):
     return sophia_coins, mateo_coins
 
 
-def coins_game(coins_list):
-    #coins_list = datasets_parser.get_coins_list(coins_list_name)
+def coins_game(coins_dataset_name):
+    coins_list = datasets_parser.get_coins_list(directory_name="datasets_part_I/", file_name=coins_dataset_name)
     sophia_coins, mateo_coins = play_game(coins_list)
     return sophia_coins
 
