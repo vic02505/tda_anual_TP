@@ -45,46 +45,44 @@ En el ejemplo de la matriz anterios, se empieza calculando el OPT(0,5) = M(0,5)
 '''
 from libs import datasets_parser
 
-
-def best_next_coin(ini, fin, gains_matrix, coins_list):
-    if ini+1 > fin:
+def best_next_coin(i, j, gains_matrix, coins_list):
+    if i+1 >j:
         return 0
-    elif coins_list[ini] >= coins_list[fin]:
-        return play_coins_game_partII(coins_list, gains_matrix, ini+1, fin)
+    elif coins_list[i] >= coins_list[j]:
+        return gains_matrix[i+1][j]
     else:
-        return play_coins_game_partII(coins_list, gains_matrix, ini, fin-1)
-            
+        return gains_matrix[i][j-1]
 
 
+def get_gains_matrix(coins_list):
 
-
-def play_coins_game_partII(coins_list, gains_matrix, i, j):
-
-    if gains_matrix[i][j] == 0:
-        gains_matrix[i][j] = max(coins_list[i] + best_next_coin(i+1, j, gains_matrix, coins_list), coins_list[j] + best_next_coin(i, j-1, gains_matrix, coins_list))
-        return gains_matrix[i][j]
-    else:
-        return gains_matrix[i][j]
-
-
-
-def coins_game_partII(coins_list):
-    
     coins_list_len = len(coins_list)
-        
+
     gains_matrix = [[0 for _ in range(coins_list_len)] for _ in range(coins_list_len)]
 
-    play_coins_game_partII(coins_list, gains_matrix, 0, coins_list_len-1)
-    
-    print("Ganancia total para Sofia: ", gains_matrix[0][coins_list_len-1])
+    for i in range(coins_list_len-1, 0, -1):
 
-    # print(gains_matrix)
+        for j in range(0, coins_list_len):
 
+            if  i > j:
+                gains_matrix[i][j] = 0
+            else:
+                gains_matrix[i][j] = max(coins_list[i] + best_next_coin(i+1, j, gains_matrix, coins_list),
+                                 coins_list[j] + best_next_coin(i, j-1, gains_matrix, coins_list))
+
+    # Esto se puede poner más lindo. El tema es que la iteración anterior llega hasta "i" igual a uno porque
+    # el cero del primer for (el que itera i) es excluyente. Por eso se hace este for aparte
+    for j in range(0, coins_list_len):
+        i = 0
+        gains_matrix[i][j] = max(coins_list[i] + best_next_coin(i + 1, j, gains_matrix, coins_list),
+                            coins_list[j] + best_next_coin(i, j - 1, gains_matrix, coins_list))
+
+    return gains_matrix
 
 def start_game():
-    dataset_name = "100.txt"
+    dataset_name = "10000.txt"
     coins_list = datasets_parser.get_coins_list(directory_name="datasets_part_II/", file_name=dataset_name)
-    coins_game_partII(coins_list)
-
+    gains_matrix =  get_gains_matrix(coins_list)
+    print(gains_matrix[0][len(coins_list)-1])
 
 start_game()
