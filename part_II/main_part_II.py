@@ -1,8 +1,6 @@
 '''
 Pseudocodigo:
 
-n = nro de tiro
-
 OPT (i,j) = max(valor de moneda izq + OPT(i+1,j),valor de moneda der + OPT (i, j-1))
 
 

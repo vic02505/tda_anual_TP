@@ -13,6 +13,9 @@ RIGHT_DOWN_DIAGONAL_INDEX = (1, -1)
 RIGHT_INDEX = (1, 0)
 RIGHT_TOP_INDEX = (1,1)
 
+
+from libs import datasets_parser_partIII
+
 def print_matrix(matrix):
     for row in matrix:
         print(" ".join(map(str, row)))
@@ -231,4 +234,13 @@ def build_game_board(rows_restrictions, columns_restrictions, ship_list):
     return game_board
 
 
-build_game_board([3,1,2], [3,2,0], [1,1])
+#build_game_board([3,1,2], [3,2,0], [1,1])
+
+def start_game():
+    dataset_name = "3_3_2.txt"
+    rows_restrictions, columns_restrictions, ship_list = datasets_parser_partIII.parse_dataset(directory_name="datasets_part_III/", file_name=dataset_name)
+    game_board = build_game_board(rows_restrictions, columns_restrictions, ship_list)
+    print_matrix(game_board)
+
+
+start_game()
