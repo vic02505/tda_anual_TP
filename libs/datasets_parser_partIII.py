@@ -11,5 +11,7 @@ def parse_dataset(directory_name, file_name):
         rows_restrictions = [int(x) for x in content[0].split('\n')]
         columns_restrictions = [int(x) for x in content[1].split('\n')]
         ship_list = [int(x) for x in content[2].split('\n')]
+
+    dataset_file.close()
         
     return rows_restrictions, columns_restrictions, ship_list

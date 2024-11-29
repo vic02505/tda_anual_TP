@@ -1,3 +1,4 @@
+from wsgiref.util import shift_path_info
 
 HORIZONTAL_DIRECTION = "HORIZONTAL"
 VERTICAL_DIRECTION = "VERTICAL"
@@ -84,12 +85,12 @@ def put_ship_on_row(board, i, j, columns_len, ship_len, row_restriction, occupie
     for k in range(0, ship_len):
         board[i+k][j] = ship_index
 
-def put_ship_on_column(board, i, j, rows_len, ship_len, columns_restriction, occupied_column_grids):
+def put_ship_on_column(board, i, j, rows_len, ship_len, column_restriction, occupied_column_grids):
 
     ship_index = ship_len
     available_positions = rows_len - j
 
-    if (occupied_column_grids >= columns_restriction) or ((occupied_column_grids+ship_len) > columns_restriction):
+    if (occupied_column_grids >= column_restriction) or ((occupied_column_grids+ship_len) > column_restriction):
         return
 
     if not is_valid_position(board, i, j, ship_len, VERTICAL_DIRECTION):
@@ -112,28 +113,31 @@ def remove_ship_on_column(board, i, j, ship_len):
         board[i+k][j] = 0
         
 def move_to_next_position(board, row_index, column_index, rows_restrictions, columns_restrictions,
-                          occupied_row_grids, occupied_column_grids, rows_len, columns_len, ship_list, ship_list_index):
+                          occupied_rows_grids, occupied_columns_grids, rows_amount, columns_amount,
+                          ships, ship_list_index):
 
-    if (column_index + 1) >= columns_len:
-        return build_game_board_aux(game_board=board, current_row=row_index+1, current_column=0,
+    if (column_index + 1) >= columns_amount:
+        return build(game_board=board, current_row=row_index+1, current_column=0,
                                     rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                                    occupied_row_grids=occupied_row_grids, occupied_column_grids=occupied_column_grids,
-                                    rows_len=rows_len, columns_len=columns_len, ships=ship_list,
+                                    occupied_rows_grids=occupied_rows_grids,
+                                    occupied_columns_grids=occupied_columns_grids, rows_amount=rows_amount,
+                                    columns_amount=columns_amount, ships=ships,
                                     current_ship_index=ship_list_index+1)
     else:        
-       return build_game_board_aux(game_board=board, current_row=row_index, current_column=column_index+1,
-                                   rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                                   occupied_row_grids=occupied_row_grids, occupied_column_grids=occupied_column_grids,
-                                   rows_len=rows_len, columns_len=columns_len, ships=ship_list,
-                                   current_ship_index=ship_list_index+1)
+       return build(game_board=board, current_row=row_index, current_column=column_index+1,
+                                    rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
+                                    occupied_rows_grids=occupied_rows_grids,
+                                    occupied_columns_grids=occupied_columns_grids,rows_amount=rows_amount,
+                                    columns_amount=columns_amount, ships=ships,
+                                     current_ship_index=ship_list_index+1)
 
 
-# ACTUALIZACION DE LA FUNCION
 def build(game_board, current_row, current_column, rows_restrictions, columns_restrictions, occupied_rows_grids,
           occupied_columns_grids, rows_amount, columns_amount, ships, current_ship_index):
 
     # Corto la recursión se me salí del tablero.
-    if (current_row >= rows_amount) or (current_column >= columns_amount) or (len(ships) == 0):
+    if ((current_row >= rows_amount) or (current_column >= columns_amount) or (len(ships) == 0)
+            or (current_ship_index >= len(ships))):
         return game_board
 
     occupied_rows_grids_copy = occupied_rows_grids.copy()
@@ -145,92 +149,89 @@ def build(game_board, current_row, current_column, rows_restrictions, columns_re
 
     game_board_copy = game_board.copy()
 
+    # Pongo el barco a lo largo.
+    if ((occupied_rows_grids_copy[current_row] + current_ship_len) <= rows_restrictions[current_row])\
+            and ((occupied_rows_grids_copy[current_row] + current_ship_len) > occupied_rows_grids[current_row]):
+        put_ship_on_row(board=game_board_copy, i=current_row, j=current_column, columns_len=columns_amount,
+                        ship_len=current_ship_len, row_restriction=rows_restrictions[current_row],
+                        occupied_row_grids=occupied_rows_grids_copy[current_row])
+        occupied_rows_grids_copy[current_row] += current_ship_len
+        removed_ship = ships_copy.pop(current_ship_index)
 
-    return
-
-
-
-
-
-def build_game_board_aux(game_board, current_row, current_column, rows_restrictions, occupied_rows_grids,
-                         occupied_columns_grids, columns_restrictions, rows_len, columns_len, ships, current_ship_index):
-
-    occupied_rows_grids_copy = occupied_rows_grids.copy()
-    occupied_columns_grids_copy = occupied_columns_grids.copy()
-
-    ships_copy = ships.copy()
-    ships_amount = len(ships_copy)
-    game_board_copy = game_board.copy()
-    current_ship_len = ships_copy[current_ship_index]
-
-    if (current_row >= rows_len) or (current_column >= columns_len):
-        return game_board_copy
-
-    if ships_amount == 0:
-        return game_board_copy
-
-    #Pongo el barco a lo largo.
-    if (occupied_rows_grids_copy[current_row] + current_ship_len <= rows_restrictions[current_row]):
-
-        put_ship_on_row(board=game_board_copy, i=current_row, j=current_column, columns_len=columns_len,
-                    ship_len=current_ship_len, row_restriction=rows_restrictions[current_ship_index],
-                    occupied_row_grids=occupied_rows_grids_copy[current_ship_index])
-        move_to_next_position(board=game_board_copy, row_index=current_row, column_index=current_column,
-                          rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                          occupied_row_grids=occupied_row_grids, occupied_column_grids=occupied_column_grids,
-                          rows_len=rows_len, columns_len=columns_len, ship_list=ships_copy,
-                          ship_list_index=current_ship_index)
-        remove_ship_on_row(game_board_copy, current_row, current_column, current_ship_len)
-
-    #Pongo el barco a lo an
-    if (occupied_columns_grids_copy[current_column] + current_ship_len <= columns_restrictions[current_column]):
-        put_ship_on_column(game_board_copy, current_row, current_column, rows_len, current_ship_len)
         move_to_next_position(board=game_board_copy, row_index=current_row, column_index=current_column,
                               rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                              occupied_row_grids=occupied_row_grids, occupied_column_grids=occupied_column_grids,
-                              rows_len=rows_len, columns_len=columns_len, ship_list=ships_copy,
+                              occupied_rows_grids=occupied_rows_grids_copy,
+                              occupied_columns_grids=occupied_columns_grids_copy,
+                              rows_amount=rows_amount, columns_amount=columns_amount,
+                              ships=ships_copy,
                               ship_list_index=current_ship_index)
-        remove_ship_on_column(game_board_copy, current_row, current_column, current_ship_len)
-    
-    # Me quedo en el mismo lugar pero considero otro barco.
-    build_game_board_aux(game_board=game_board_copy, current_row=current_row, current_column=current_column,
-                         rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                         occupied_row_grids=occupied_row_grids, occupied_column_grids=occupied_column_grids,
-                         rows_len=rows_len, columns_len=columns_len, ships=ships_copy,
-                         current_ship_index=current_ship_index+ 1)
-    
-    # Avanzo al siguiente lugar pero con el mismo barco
-    move_to_next_position(board=game_board_copy, row_index=current_row, column_index=current_column,
-                          rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                          occupied_row_grids=occupied_row_grids, occupied_column_grids=occupied_column_grids,
-                          rows_len=rows_len, columns_len=columns_len, ship_list=ships_copy,
-                          ship_list_index=current_ship_index-1)
-    
-    # Elimino el barco
-    ships.pop(current_ship_index)
-    return build_game_board_aux(game_board=game_board_copy, current_row=current_row, current_column=current_column,
-                                rows_restrictions=rows_restrictions, rows_len=rows_len, columns_len=columns_len,
-                                occupied_row_grids=occupied_row_grids, occupied_column_grids=occupied_column_grids,
-                                columns_restrictions=columns_restrictions, ships=ships_copy,
-                                current_ship_index=current_ship_index)
-    
+
+        remove_ship_on_row(game_board_copy, current_row, current_column, current_ship_len)
+        occupied_rows_grids_copy[current_row] -= current_ship_len
+        ships_copy.insert(current_ship_index, removed_ship)
+
+        # Pongo el barco a lo ancho
+        if ((occupied_columns_grids_copy[current_column] + current_ship_len) <= columns_restrictions[current_column])\
+                and ((occupied_columns_grids_copy[current_column] + current_ship_len) > occupied_columns_grids[current_column]):
+            put_ship_on_column(game_board_copy, current_row, current_column, rows_amount, current_ship_len,
+                               columns_restrictions[current_column], occupied_columns_grids_copy[current_column])
+            occupied_columns_grids_copy[current_column] += current_ship_len
+            removed_ship = ships_copy.pop(current_ship_index)
+
+            move_to_next_position(board=game_board_copy, row_index=current_row, column_index=current_column,
+                                  rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
+                                  occupied_rows_grids=occupied_rows_grids_copy,
+                                  occupied_columns_grids=occupied_columns_grids_copy,
+                                  rows_amount=rows_amount, columns_amount=columns_amount, ships=ships_copy,
+                                  ship_list_index=current_ship_index)
+
+            remove_ship_on_column(game_board_copy, current_row, current_column, current_ship_len)
+            occupied_columns_grids_copy[current_column] -= current_ship_len
+            ships_copy.insert(current_ship_index, removed_ship)
+
+        # Me quedo en el mismo lugar pero considero otro barco.
+        build(game_board=game_board_copy,current_row=current_row,current_column=current_column,
+            rows_restrictions=rows_restrictions,columns_restrictions=columns_restrictions,
+            occupied_rows_grids=occupied_rows_grids_copy, occupied_columns_grids=occupied_columns_grids_copy,
+            rows_amount=rows_amount,columns_amount=columns_amount,
+            ships=ships_copy, current_ship_index=current_ship_index+1)
+
+        # Avanzo al siguiente lugar pero con el mismo barco
+        move_to_next_position(board=game_board_copy,row_index=current_row, column_index=current_column,
+                              rows_restrictions=rows_restrictions,columns_restrictions=columns_restrictions,
+                              occupied_rows_grids=occupied_rows_grids_copy,
+                              occupied_columns_grids=occupied_columns_grids_copy,rows_amount=rows_amount,
+                              columns_amount=columns_amount, ships=ships_copy,
+                              ship_list_index=current_ship_index-1)
+
+        # Elimino el barco
+        ships.pop(current_ship_index)
+        build(game_board=game_board_copy, current_row=current_row, current_column=current_column,
+                                    rows_restrictions=rows_restrictions, rows_amount=rows_amount,
+                                    columns_amount=columns_amount, occupied_rows_grids=occupied_rows_grids_copy,
+                                    occupied_columns_grids=occupied_columns_grids_copy,
+                                    columns_restrictions=columns_restrictions, ships=ships_copy,
+                                    current_ship_index=current_ship_index)
+
+    return game_board_copy
 
 def build_game_board(rows_restrictions, columns_restrictions, ship_list):
-    
+
     game_board = [[0 for _ in range(len(rows_restrictions))] for _ in range(len(columns_restrictions))]
 
     print_matrix(game_board)
 
-    rows_len = len(rows_restrictions)
-    columns_len = len(columns_restrictions)
+    rows_amount = len(rows_restrictions)
+    columns_amount = len(columns_restrictions)
 
-    occupied_row_grids = [0]*rows_len
-    occupied_column_grids = [0]*columns_len
+    occupied_row_grids = [0]*rows_amount
+    occupied_column_grids = [0]*columns_amount
 
-    build_game_board_aux(game_board=game_board, current_row=0, current_column=0, rows_restrictions=rows_restrictions,
-                         occupied_row_grids=occupied_row_grids, occupied_column_grids=occupied_column_grids,
-                         columns_restrictions=columns_restrictions, rows_len=rows_len, columns_len=columns_len,
-                         ships=ship_list, current_ship_index=0)
+    build(game_board=game_board, current_row=0, current_column=0, rows_restrictions=rows_restrictions,
+                            occupied_rows_grids=occupied_row_grids, occupied_columns_grids=occupied_column_grids,
+                            columns_restrictions=columns_restrictions, rows_amount=rows_amount,
+                            columns_amount=columns_amount,
+                            ships=ship_list, current_ship_index=0)
     return game_board
 
 
@@ -238,9 +239,14 @@ def build_game_board(rows_restrictions, columns_restrictions, ship_list):
 
 def start_game():
     dataset_name = "3_3_2.txt"
-    rows_restrictions, columns_restrictions, ship_list = datasets_parser_partIII.parse_dataset(directory_name="datasets_part_III/", file_name=dataset_name)
+    rows_restrictions, columns_restrictions, ship_list = (datasets_parser_partIII
+                                                          .parse_dataset(directory_name="datasets_partIII/",
+                                                                         file_name=dataset_name))
+    ship_list = sorted(ship_list, reverse=True)
     game_board = build_game_board(rows_restrictions, columns_restrictions, ship_list)
     print_matrix(game_board)
 
 
 start_game()
+
+print("hola")
