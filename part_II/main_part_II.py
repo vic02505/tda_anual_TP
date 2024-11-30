@@ -41,7 +41,7 @@ esa posicion y se va calculando hacia atras hasta generar todos los calculos
 En el ejemplo de la matriz anterios, se empieza calculando el OPT(0,5) = M(0,5)
 
 '''
-from libs import datasets_parser
+from common_libs import datasets_parser
 
 def best_next_coin(i, j, gains_matrix, coins_list):
     if i+1 >j:

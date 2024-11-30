@@ -3,250 +3,124 @@ from wsgiref.util import shift_path_info
 HORIZONTAL_DIRECTION = "HORIZONTAL"
 VERTICAL_DIRECTION = "VERTICAL"
 
-LEFT_DOWN_DIAGONAL_INDEX = (-1,-1)
-LEFT_INDEX = (-1,0)
-LEFT_TOP_DIAGONAL_INDEX =(-1, 1)
+GAME_BOARD = 0
+PENDING_DEMAND = 1
+LAST_USED_SHIP = 2
 
-DOWN_INDEX = (0, -1)
-TOP_INDEX = (0, 1) 
-
-RIGHT_DOWN_DIAGONAL_INDEX = (1, -1)
-RIGHT_INDEX = (1, 0)
-RIGHT_TOP_INDEX = (1,1)
-
-
-from libs import datasets_parser_partIII
+from part_III.libs import ships_operations
+from common_libs import datasets_parser_partIII
 
 def print_matrix(matrix):
     for row in matrix:
         print(" ".join(map(str, row)))
 
 
-def is_valid_position(board, i, j, ship_len, ship_direction):
-    rows_amount = len(board)
-    columns_amount = len(board[0])
-    
-    neighbors_directions = [
-        LEFT_DOWN_DIAGONAL_INDEX, LEFT_INDEX, LEFT_TOP_DIAGONAL_INDEX,
-        DOWN_INDEX, TOP_INDEX, RIGHT_DOWN_DIAGONAL_INDEX, RIGHT_INDEX, RIGHT_TOP_INDEX,
-    ]
-    
-    if ship_direction == HORIZONTAL_DIRECTION:
-        if j + ship_len > columns_amount:
-            return False 
-        
-        for k in range(ship_len):
-            actual_i, actual_j = i, j + k
-            
-            if board[actual_i][actual_j] != 0:
-                return False
-            
-            for (dx, dy) in neighbors_directions:
-                neighbor_i, neighbor_j = actual_i + dx, actual_j + dy
-                if (0 <= neighbor_i < rows_amount) and (0 <= neighbor_j < columns_amount):
-                    if board[neighbor_i][neighbor_j] != 0:
-                        return False  
-    
-    elif ship_direction == VERTICAL_DIRECTION:
-        if i + ship_len > rows_amount:
-            return False 
-        
-        for k in range(ship_len):
-            actual_i, actual_j = i + k, j
-            
-            if board[actual_i][actual_j] != 0:
-                return False
-            
-            for (dx, dy) in neighbors_directions:
-                neighbor_i, neighbor_j = actual_i + dx, actual_j + dy
-                if (0 <= neighbor_i < rows_amount) and (0 <= neighbor_j < columns_amount):
-                    if board[neighbor_i][neighbor_j] != 0:
-                        return False  
-    
-    else:
-        raise ValueError("The direction must be 'horizontal' or 'vertical'")
-    
-    return True
+def horizontal_combination(ships, current_ship_index, game_board, rows_restrictions, columns_restrictions,
+                        best_local_solution, best_global_solution, current_row, current_column):
+
+    current_ship_len = ships[current_ship_index]
+    ship_id = current_ship_index + 1  # IDs para distinguir a los barcos.
+
+    # Se pone el barco actual a lo largo.
+    ships_operations.put_ship_on_row(game_board=game_board, current_row=current_row, current_column=current_column,
+                                     ship_len=current_ship_len, ship_id=ship_id, rows_restrictions=rows_restrictions,
+                                     columns_restrictions=columns_restrictions)
+
+    best_local_solution[PENDING_DEMAND] = sum(rows_restrictions) + sum(columns_restrictions)
+    best_local_solution[GAME_BOARD] = game_board.copy()
+    best_local_solution[LAST_USED_SHIP] = current_ship_len
+
+    if best_local_solution[PENDING_DEMAND] < best_global_solution[PENDING_DEMAND]:
+        build_best_solution(ships, current_ship_index+1, game_board, rows_restrictions, columns_restrictions,
+                            best_local_solution, best_global_solution, current_row, current_column)
+
+    # Se elimina el barco.
+    ships_operations.remove_ship_on_row(board=game_board, current_row=current_row, current_column=current_column,
+                                        ship_len=current_ship_len, rows_restrictions=rows_restrictions,
+                                        columns_restrictions=columns_restrictions)
 
 
-def put_ship_on_row(board, i, j, columns_len, ship_len, row_restriction, occupied_row_grids):
+def vertical_combination(ships, current_ship_index, game_board, rows_restrictions, columns_restrictions,
+                           best_local_solution, best_global_solution, current_row, current_column):
 
-    ship_index = ship_len
-    available_positions = columns_len - j
+    current_ship_len = ships[current_ship_index]
+    ship_id = current_ship_index + 1  # IDs para distinguir a los barcos.
 
-    if (occupied_row_grids >= row_restriction) or ((occupied_row_grids+ship_len) >= row_restriction):
-        return
-    if not is_valid_position(board, i, j, ship_len, HORIZONTAL_DIRECTION):
-        return
+    # Se pone el barco actual a lo ancho.
+    ships_operations.put_ship_on_column(game_board=game_board, current_row=current_row, current_column=current_column,
+                                     ship_len=current_ship_len, ship_id=ship_id, rows_restrictions=rows_restrictions,
+                                     columns_restrictions=columns_restrictions)
 
-    if ship_len > available_positions:
-        return
-    
-    for k in range(0, ship_len):
-        board[i+k][j] = ship_index
+    best_local_solution[PENDING_DEMAND] = sum(rows_restrictions) + sum(columns_restrictions)
+    best_local_solution[GAME_BOARD] = game_board.copy()
+    best_local_solution[LAST_USED_SHIP] = current_ship_len
 
-def put_ship_on_column(board, i, j, rows_len, ship_len, column_restriction, occupied_column_grids):
+    if best_local_solution[PENDING_DEMAND] < best_global_solution[PENDING_DEMAND]:
+        build_best_solution(ships=ships, current_ship_index=current_ship_index + 1, game_board=game_board,
+                            rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
+                            best_local_solution=best_local_solution, best_global_solution=best_global_solution,
+                            current_row=current_row, current_column=current_column)
 
-    ship_index = ship_len
-    available_positions = rows_len - j
+    # Se elimina el barco.
+    ships_operations.remove_ship_on_column(board=game_board, current_row=current_row, current_column=current_column,
+                                        ship_len=current_ship_len, rows_restrictions=rows_restrictions,
+                                        columns_restrictions=columns_restrictions)
 
-    if (occupied_column_grids >= column_restriction) or ((occupied_column_grids+ship_len) > column_restriction):
+
+def build_best_solution(ships, current_ship_index, game_board, rows_restrictions, columns_restrictions,
+                        best_local_solution, best_global_solution, current_row, current_column):
+
+    # Actualizo el óptimo global si el óptimo local es mejor.
+    if best_local_solution[PENDING_DEMAND] < best_global_solution[PENDING_DEMAND]:
+        best_global_solution[GAME_BOARD] = best_local_solution[GAME_BOARD].copy()
+        best_global_solution[PENDING_DEMAND] = best_local_solution[PENDING_DEMAND]
+        best_global_solution[LAST_USED_SHIP] = best_local_solution[LAST_USED_SHIP]
+
+    if current_ship_index >= len(ships):
         return
 
-    if not is_valid_position(board, i, j, ship_len, VERTICAL_DIRECTION):
-        return
+    current_ship_len = ships[current_ship_index]
 
-    if ship_len > available_positions:
-        return
-    
-    for k in range(0, ship_len):
-        board[i][j+k] = ship_index
-        
-        
-def remove_ship_on_row(board, i, j, ship_len):
-    for k in range(0, ship_len):
-        board[i][j+k] = 0
+    if best_local_solution[LAST_USED_SHIP] == current_ship_len :
+          build_best_solution(ships, current_ship_index+1, game_board, rows_restrictions, columns_restrictions,
+                            best_local_solution, best_global_solution, current_row, current_column)
 
+    for i in range(len(rows_restrictions)):
+        for j in range(len(columns_restrictions)):
 
-def remove_ship_on_column(board, i, j, ship_len):
-    for k in range(0, ship_len):
-        board[i+k][j] = 0
-        
-def move_to_next_position(board, row_index, column_index, rows_restrictions, columns_restrictions,
-                          occupied_rows_grids, occupied_columns_grids, rows_amount, columns_amount,
-                          ships, ship_list_index):
+            # Pongo el barco actual a lo largo.
+            horizontal_combination(ships, current_ship_index, game_board, rows_restrictions, columns_restrictions,
+                                       best_local_solution, best_global_solution, i, j)
+            # Pongo el barco actual a lo ancho.
+            vertical_combination(ships, current_ship_index, game_board, rows_restrictions, columns_restrictions,
+                                       best_local_solution, best_global_solution, i, j)
 
-    if (column_index + 1) >= columns_amount:
-        return build(game_board=board, current_row=row_index+1, current_column=0,
-                                    rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                                    occupied_rows_grids=occupied_rows_grids,
-                                    occupied_columns_grids=occupied_columns_grids, rows_amount=rows_amount,
-                                    columns_amount=columns_amount, ships=ships,
-                                    current_ship_index=ship_list_index+1)
-    else:        
-       return build(game_board=board, current_row=row_index, current_column=column_index+1,
-                                    rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                                    occupied_rows_grids=occupied_rows_grids,
-                                    occupied_columns_grids=occupied_columns_grids,rows_amount=rows_amount,
-                                    columns_amount=columns_amount, ships=ships,
-                                     current_ship_index=ship_list_index+1)
+    # No pongo el barco actual en ningún lado.
+    return build_best_solution(ships, current_ship_index+1, game_board, rows_restrictions, columns_restrictions,
+                               best_local_solution, best_global_solution, current_row, current_column)
 
-
-def build(game_board, current_row, current_column, rows_restrictions, columns_restrictions, occupied_rows_grids,
-          occupied_columns_grids, rows_amount, columns_amount, ships, current_ship_index):
-
-    # Corto la recursión se me salí del tablero.
-    if ((current_row >= rows_amount) or (current_column >= columns_amount) or (len(ships) == 0)
-            or (current_ship_index >= len(ships))):
-        return game_board
-
-    occupied_rows_grids_copy = occupied_rows_grids.copy()
-    occupied_columns_grids_copy = occupied_columns_grids.copy()
-
-    ships_copy = ships.copy()
-    ships_amount = len(ships_copy)
-    current_ship_len = ships_copy[current_ship_index]
-
-    game_board_copy = game_board.copy()
-
-    # Pongo el barco a lo largo.
-    if ((occupied_rows_grids_copy[current_row] + current_ship_len) <= rows_restrictions[current_row])\
-            and ((occupied_rows_grids_copy[current_row] + current_ship_len) > occupied_rows_grids[current_row]):
-        put_ship_on_row(board=game_board_copy, i=current_row, j=current_column, columns_len=columns_amount,
-                        ship_len=current_ship_len, row_restriction=rows_restrictions[current_row],
-                        occupied_row_grids=occupied_rows_grids_copy[current_row])
-        occupied_rows_grids_copy[current_row] += current_ship_len
-        removed_ship = ships_copy.pop(current_ship_index)
-
-        move_to_next_position(board=game_board_copy, row_index=current_row, column_index=current_column,
-                              rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                              occupied_rows_grids=occupied_rows_grids_copy,
-                              occupied_columns_grids=occupied_columns_grids_copy,
-                              rows_amount=rows_amount, columns_amount=columns_amount,
-                              ships=ships_copy,
-                              ship_list_index=current_ship_index)
-
-        remove_ship_on_row(game_board_copy, current_row, current_column, current_ship_len)
-        occupied_rows_grids_copy[current_row] -= current_ship_len
-        ships_copy.insert(current_ship_index, removed_ship)
-
-        # Pongo el barco a lo ancho
-        if ((occupied_columns_grids_copy[current_column] + current_ship_len) <= columns_restrictions[current_column])\
-                and ((occupied_columns_grids_copy[current_column] + current_ship_len) > occupied_columns_grids[current_column]):
-            put_ship_on_column(game_board_copy, current_row, current_column, rows_amount, current_ship_len,
-                               columns_restrictions[current_column], occupied_columns_grids_copy[current_column])
-            occupied_columns_grids_copy[current_column] += current_ship_len
-            removed_ship = ships_copy.pop(current_ship_index)
-
-            move_to_next_position(board=game_board_copy, row_index=current_row, column_index=current_column,
-                                  rows_restrictions=rows_restrictions, columns_restrictions=columns_restrictions,
-                                  occupied_rows_grids=occupied_rows_grids_copy,
-                                  occupied_columns_grids=occupied_columns_grids_copy,
-                                  rows_amount=rows_amount, columns_amount=columns_amount, ships=ships_copy,
-                                  ship_list_index=current_ship_index)
-
-            remove_ship_on_column(game_board_copy, current_row, current_column, current_ship_len)
-            occupied_columns_grids_copy[current_column] -= current_ship_len
-            ships_copy.insert(current_ship_index, removed_ship)
-
-        # Me quedo en el mismo lugar pero considero otro barco.
-        build(game_board=game_board_copy,current_row=current_row,current_column=current_column,
-            rows_restrictions=rows_restrictions,columns_restrictions=columns_restrictions,
-            occupied_rows_grids=occupied_rows_grids_copy, occupied_columns_grids=occupied_columns_grids_copy,
-            rows_amount=rows_amount,columns_amount=columns_amount,
-            ships=ships_copy, current_ship_index=current_ship_index+1)
-
-        # Avanzo al siguiente lugar pero con el mismo barco
-        move_to_next_position(board=game_board_copy,row_index=current_row, column_index=current_column,
-                              rows_restrictions=rows_restrictions,columns_restrictions=columns_restrictions,
-                              occupied_rows_grids=occupied_rows_grids_copy,
-                              occupied_columns_grids=occupied_columns_grids_copy,rows_amount=rows_amount,
-                              columns_amount=columns_amount, ships=ships_copy,
-                              ship_list_index=current_ship_index-1)
-
-        # Elimino el barco
-        ships.pop(current_ship_index)
-        build(game_board=game_board_copy, current_row=current_row, current_column=current_column,
-                                    rows_restrictions=rows_restrictions, rows_amount=rows_amount,
-                                    columns_amount=columns_amount, occupied_rows_grids=occupied_rows_grids_copy,
-                                    occupied_columns_grids=occupied_columns_grids_copy,
-                                    columns_restrictions=columns_restrictions, ships=ships_copy,
-                                    current_ship_index=current_ship_index)
-
-    return game_board_copy
-
-def build_game_board(rows_restrictions, columns_restrictions, ship_list):
+def build_best_game_board(rows_restrictions, columns_restrictions, ships):
 
     game_board = [[0 for _ in range(len(rows_restrictions))] for _ in range(len(columns_restrictions))]
 
-    print_matrix(game_board)
+    total_demand = sum(rows_restrictions) + sum(columns_restrictions)
+    last_used_ship = -1 # Al principio no se uso ningun barco
 
-    rows_amount = len(rows_restrictions)
-    columns_amount = len(columns_restrictions)
+    best_local_solution = [game_board.copy(), total_demand, last_used_ship]
+    best_global_solution = [game_board.copy(), total_demand, last_used_ship]
 
-    occupied_row_grids = [0]*rows_amount
-    occupied_column_grids = [0]*columns_amount
+    build_best_solution(ships, 0, game_board, rows_restrictions, columns_restrictions,
+                        best_local_solution, best_global_solution, 0, 0)
 
-    build(game_board=game_board, current_row=0, current_column=0, rows_restrictions=rows_restrictions,
-                            occupied_rows_grids=occupied_row_grids, occupied_columns_grids=occupied_column_grids,
-                            columns_restrictions=columns_restrictions, rows_amount=rows_amount,
-                            columns_amount=columns_amount,
-                            ships=ship_list, current_ship_index=0)
-    return game_board
+    return best_global_solution[GAME_BOARD]
 
 
-#build_game_board([3,1,2], [3,2,0], [1,1])
-
-def start_game():
-    dataset_name = "3_3_2.txt"
-    rows_restrictions, columns_restrictions, ship_list = (datasets_parser_partIII
-                                                          .parse_dataset(directory_name="datasets_partIII/",
-                                                                         file_name=dataset_name))
-    ship_list = sorted(ship_list, reverse=True)
-    game_board = build_game_board(rows_restrictions, columns_restrictions, ship_list)
-    print_matrix(game_board)
+def build_game_board(dataset_name):
+    rows_restrictions, columns_restrictions, ships_list = (datasets_parser_partIII
+                                                          .parse_dataset("datasets_partIII/",dataset_name))
+    return build_best_game_board(rows_restrictions, columns_restrictions, ships_list)
 
 
-start_game()
+game_board = build_game_board("3_3_2.txt")
 
-print("hola")
+print_matrix(game_board)
