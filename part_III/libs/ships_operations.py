@@ -65,27 +65,28 @@ def put_ship_on_row(game_board, current_row, current_column, ship_len, ship_id, 
     available_positions = len(columns_restrictions) - current_column
 
     if (ship_len > rows_restrictions[current_row]) or (ship_len > available_positions):
-        return
+        return False
 
     if not is_valid_position(game_board, current_row, current_column, ship_len, HORIZONTAL_DIRECTION):
-        return
+        return False
 
     for k in range(0, ship_len):
-        game_board[current_row][current_column + k] = ship_id
-        columns_restrictions[current_column + k] -= 1
+        game_board[current_row][current_column+k] = ship_id
+        columns_restrictions[current_column+k] -= 1
 
     rows_restrictions[current_row] -= ship_len
 
+    return True
 
 def put_ship_on_column(game_board, current_row, current_column, ship_len, ship_id, rows_restrictions,
                        columns_restrictions):
     available_positions = len(columns_restrictions) - current_column
 
     if (ship_len > rows_restrictions[current_row]) or (ship_len > available_positions):
-        return
+        return False
 
     if not is_valid_position(game_board, current_row, current_column, ship_len, VERTICAL_DIRECTION):
-        return
+        return False
 
     for k in range(0, ship_len):
         game_board[current_row + k][current_column] = ship_id
@@ -93,6 +94,7 @@ def put_ship_on_column(game_board, current_row, current_column, ship_len, ship_i
 
     rows_restrictions[current_column] -= ship_len
 
+    return True
 
 def remove_ship_on_row(board, current_row, current_column, ship_len, rows_restrictions, columns_restrictions):
     for k in range(0, ship_len):
