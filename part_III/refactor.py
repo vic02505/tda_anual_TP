@@ -109,7 +109,7 @@ def try_horizontal_combinations(ships, current_ship_index, board, rows_restricti
                 best_board = copy.deepcopy(board_aux)
 
             ships_operations.remove_ship_on_row(board, row, ship_begin_position, current_ship_len,
-                                                rows_restrictions,columns_restrictions)
+                                                rows_occupation,columns_occupation)
 
     return best_board, global_solution
 
@@ -152,7 +152,7 @@ def try_vertical_combinations(ships, current_ship_index, board, rows_restriction
                 best_board = copy.deepcopy(board_aux)
 
             ships_operations.remove_ship_on_column(board, ship_begin_position, column, current_ship_len,
-                                                rows_restrictions,columns_restrictions)
+                                                rows_occupation,columns_occupation)
 
     return best_board, global_solution
 
@@ -175,18 +175,18 @@ def build_game_board_bt(ships, current_ship_index, game_board, rows_restrictions
 
     best_game_board = copy.deepcopy(game_board)
 
-    game_board_aux, local_solution = try_horizontal_combinations(ships=ships, current_ship_index=current_ship_index,
+    game_board_aux, local_solution_aux = try_horizontal_combinations(ships=ships, current_ship_index=current_ship_index,
                                                                  board=game_board, rows_restrictions=rows_restrictions,
                                                                  columns_restrictions=columns_restrictions,
                                                                  rows_occupation=rows_occupation,
                                                                  columns_occupation=columns_occupation,
                                                                  local_solution=local_solution,
                                                                  global_solution=global_solution)
-    if local_solution > global_solution:
-        global_solution = local_solution
+    if local_solution_aux > global_solution:
+        global_solution = local_solution_aux
         best_game_board = copy.deepcopy(game_board_aux)
 
-    game_board_aux, local_solution = try_vertical_combinations(ships=ships, current_ship_index=current_ship_index,
+    game_board_aux, local_solution_aux = try_vertical_combinations(ships=ships, current_ship_index=current_ship_index,
                                                                board=game_board, rows_restrictions=rows_restrictions,
                                                                columns_restrictions=columns_restrictions,
                                                                rows_occupation=rows_occupation,
@@ -194,11 +194,11 @@ def build_game_board_bt(ships, current_ship_index, game_board, rows_restrictions
                                                                local_solution=local_solution,
                                                                global_solution=global_solution)
 
-    if local_solution > global_solution:
-        global_solution = local_solution
+    if local_solution_aux > global_solution:
+        global_solution = local_solution_aux
         best_game_board = copy.deepcopy(game_board_aux)
 
-    game_board_aux, local_solution = build_game_board_bt(ships=ships, current_ship_index=current_ship_index+1,
+    game_board_aux, local_solution_aux = build_game_board_bt(ships=ships, current_ship_index=current_ship_index+1,
                                                          game_board=game_board, rows_restrictions=rows_restrictions,
                                                          columns_restrictions=columns_restrictions,
                                                          rows_occupation=rows_occupation,
@@ -206,8 +206,8 @@ def build_game_board_bt(ships, current_ship_index, game_board, rows_restrictions
                                                          local_solution=local_solution,
                                                          global_solution=global_solution)
 
-    if local_solution > global_solution:
-        global_solution = local_solution
+    if local_solution_aux > global_solution:
+        global_solution = local_solution_aux
         best_game_board = copy.deepcopy(game_board_aux)
 
     return best_game_board, global_solution
@@ -231,11 +231,6 @@ files_name = ["3_3_2.txt", "5_5_6.txt", "8_7_10.txt" ,"10_3_3.txt", "10_10_10.tx
               "15_10_15.txt", "20_20_20.txt", "20_25_30.txt", "30_25_25.txt"]
 
 
-_, score = build_naval_battle_game_board("10_10_10.txt")
+_, score = build_naval_battle_game_board("30_25_25.txt")
 
-for file_name in files_name:
-    print(f"--------------------------------SOLUCION PARA {file_name}---------------------------------------------")
-    game_board, score = build_naval_battle_game_board(file_name)
-    #print_matrix(game_board)
-    print(f"Optimo: {score}")
-    print("--------------------------------------------------------------------------------------------------------")
+print(score)
