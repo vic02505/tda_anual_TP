@@ -1,4 +1,4 @@
-from part_I.main_part_I import coins_game
+from part_I.greedy_coins_game import coins_game
 from util import time_algorithm
 from part_I.libs.datasets_parser import get_coins_list
 

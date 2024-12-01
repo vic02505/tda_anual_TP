@@ -215,7 +215,7 @@ def build_game_board_bt(ships, current_ship_index, game_board, rows_restrictions
 
 def build_naval_battle_game_board(dataset_name):
     rows_restrictions, columns_restrictions, ships = (datasets_parser_partIII
-                                                          .parse_dataset("datasets_partIII/",dataset_name))
+                                                          .parse_dataset("local_datasets/",dataset_name))
 
     game_board = [[0 for _ in range(len(columns_restrictions))] for _ in range(len(rows_restrictions))]
     rows_occupation = [0]*len(rows_restrictions)

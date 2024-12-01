@@ -42,6 +42,8 @@ En el ejemplo de la matriz anterios, se empieza calculando el OPT(0,5) = M(0,5)
 
 '''
 from common_libs import datasets_parser
+from part_I.greedy_coins_game import coins_game
+
 
 def best_next_coin(i, j, gains_matrix, coins_list):
     if i+1 >j:
@@ -77,10 +79,22 @@ def get_gains_matrix(coins_list):
 
     return gains_matrix
 
-def start_game():
-    dataset_name = "10000.txt"
-    coins_list = datasets_parser.get_coins_list(directory_name="datasets_part_II/", file_name=dataset_name)
-    gains_matrix =  get_gains_matrix(coins_list)
-    print(gains_matrix[0][len(coins_list)-1])
+def start_game(dataset):
+    coins_list = []
+    gains_matrix =  get_gains_matrix(dataset)
+    return gains_matrix[0][len(coins_list)-1]
 
-start_game()
+def run_use_cases(directory_name):
+    datasets_list = datasets_parser.get_datasets_list(directory_name)
+
+    if datasets_list is None:
+        print("[ERROR] No se pudieron cargar los datasets.")
+        return
+
+    results = []
+
+    for dataset in datasets_list:
+        sophia_gains =  start_game(dataset)
+        results.append(sophia_gains)
+
+    return results

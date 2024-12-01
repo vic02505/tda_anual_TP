@@ -1,12 +1,11 @@
 
 import os
+from audioop import error
 
-def get_coins_list(directory_name, file_name):
 
-    relative_path = directory_name + file_name
-    path = os.path.abspath("") + "/"
+def get_coins_list(dataset_path):
 
-    with open(path + relative_path, 'r') as dataset_file:
+    with open(dataset_path, 'r') as dataset_file:
         
         content = dataset_file.read()
         
@@ -15,3 +14,20 @@ def get_coins_list(directory_name, file_name):
     dataset_file.close()
 
     return coins_list
+
+def get_datasets_list(directory_name):
+    path = os.path.abspath("") + "/"
+    aboslute_path = path + directory_name
+    datasets_list = []
+
+    try:
+        for dataset in os.listdir(aboslute_path):
+
+            if dataset !=  "resultados_esperados.txt":
+                dataset_absolute_path = os.path.join(aboslute_path, dataset)
+                datasets_list.append(get_coins_list(dataset_absolute_path))
+    except error:
+        print(f"[ERROR] {error}")
+        return None
+
+    return datasets_list

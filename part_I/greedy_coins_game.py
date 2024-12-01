@@ -39,8 +39,21 @@ def play_game(coins_list):
     return sophia_coins, mateo_coins
 
 
-def coins_game(coins_dataset_name):
-    coins_list = datasets_parser.get_coins_list(directory_name="datasets_part_I/", file_name=coins_dataset_name)
-    sophia_coins, mateo_coins = play_game(coins_list)
-    return sophia_coins
+def coins_game(dataset):
+    sophia_coins, mateo_coins = play_game(dataset)
+    return sophia_coins, mateo_coins
 
+def run_use_cases(directory_name):
+    datasets_list = datasets_parser.get_datasets_list(directory_name)
+
+    if datasets_list is None:
+        print("[ERROR] No se pudieron cargar los datasets.")
+        return
+
+    results = []
+
+    for dataset in datasets_list:
+        sophia_coins, mateo_coins =  coins_game(dataset)
+        results.append((sophia_coins, mateo_coins))
+
+    return results
