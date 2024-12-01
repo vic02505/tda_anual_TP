@@ -65,7 +65,7 @@ def put_ship_on_row(game_board, current_row, current_column, ship_len, ship_id, 
 
     for k in range(0, ship_len):
         game_board[current_row][current_column+k] = ship_id
-        columns_occupation[current_column + k] += 1
+        columns_occupation[current_column+k] += 1
 
     rows_occupation[current_row] += ship_len
 
@@ -76,23 +76,23 @@ def put_ship_on_column(game_board, current_row, current_column, ship_len, ship_i
 
     for k in range(0, ship_len):
         game_board[current_row + k][current_column] = ship_id
-        columns_occupation[current_row + k] += 1
+        rows_occupation[current_row+k] += 1
 
-    rows_occupation[current_column] += ship_len
+    columns_occupation[current_column] += ship_len
 
     return True
 
 def remove_ship_on_row(board, current_row, current_column, ship_len, rows_occupation, columns_occupation):
     for k in range(0, ship_len):
-        board[current_row][current_column + k] = 0
-        columns_occupation[current_column + k] -= 1
+        board[current_row][current_column+k] = 0
+        columns_occupation[current_column+k] -= 1
 
     rows_occupation[current_row] -= ship_len
 
 
 def remove_ship_on_column(board, current_row, current_column, ship_len, rows_occupation, columns_occupation):
     for k in range(0, ship_len):
-        board[current_row + k][current_column] = 0
-        rows_occupation[current_row + k] -= 1
+        board[current_row+k][current_column] = 0
+        rows_occupation[current_row+k] -= 1
 
     columns_occupation[current_column] -= ship_len

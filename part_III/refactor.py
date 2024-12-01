@@ -54,6 +54,7 @@ def generate_columns_combinations(board, rows_restrictions, rows_occupation,
         adjacent_grids = 0
 
         for i in range(rows_amount):
+
             if (board[i][j] == 0) and (rows_occupation[i] < rows_restrictions[i]):
                 adjacent_grids += 1
             else:
@@ -104,7 +105,7 @@ def try_horizontal_combinations(ships, current_ship_index, board, rows_restricti
                                                             global_solution=global_solution)
 
             if local_solution_aux > global_solution:
-                global_solution = local_solution
+                global_solution = local_solution_aux
                 best_board = copy.deepcopy(board_aux)
 
             ships_operations.remove_ship_on_row(board, row, ship_begin_position, current_ship_len,
@@ -147,7 +148,7 @@ def try_vertical_combinations(ships, current_ship_index, board, rows_restriction
                                                             global_solution=global_solution)
 
             if local_solution_aux > global_solution:
-                global_solution = local_solution
+                global_solution = local_solution_aux
                 best_board = copy.deepcopy(board_aux)
 
             ships_operations.remove_ship_on_column(board, ship_begin_position, column, current_ship_len,
@@ -216,14 +217,25 @@ def build_naval_battle_game_board(dataset_name):
     rows_restrictions, columns_restrictions, ships = (datasets_parser_partIII
                                                           .parse_dataset("datasets_partIII/",dataset_name))
 
-    game_board = [[0 for _ in range(len(rows_restrictions))] for _ in range(len(columns_restrictions))]
+    game_board = [[0 for _ in range(len(columns_restrictions))] for _ in range(len(rows_restrictions))]
     rows_occupation = [0]*len(rows_restrictions)
     columns_occupation = [0]*len(columns_restrictions)
+    ships.sort(reverse=True)
+
 
     return build_game_board_bt(ships,0, game_board, rows_restrictions, columns_restrictions,
                                rows_occupation, columns_occupation, 0, 0)
 
-game_board, score = build_naval_battle_game_board("3_3_2.txt")
 
-print_matrix(game_board)
-print(score)
+files_name = ["3_3_2.txt", "5_5_6.txt", "8_7_10.txt" ,"10_3_3.txt", "10_10_10.txt", "12_12_21.txt",
+              "15_10_15.txt", "20_20_20.txt", "20_25_30.txt", "30_25_25.txt"]
+
+
+_, score = build_naval_battle_game_board("10_10_10.txt")
+
+for file_name in files_name:
+    print(f"--------------------------------SOLUCION PARA {file_name}---------------------------------------------")
+    game_board, score = build_naval_battle_game_board(file_name)
+    #print_matrix(game_board)
+    print(f"Optimo: {score}")
+    print("--------------------------------------------------------------------------------------------------------")
