@@ -16,6 +16,10 @@ def print_matrix(matrix):
         print(" ".join(map(str, row)))
 
 
+def get_most_demanded_indexes(restrictions):
+    return sorted(range(len(restrictions)), key=lambda i: restrictions[i], reverse=True)
+
+
 def horizontal_combination(ships, current_ship_index, game_board, rows_restrictions, columns_restrictions,
                         best_local_solution, best_global_solution, current_row, current_column):
 
@@ -49,8 +53,8 @@ def vertical_combination(ships, current_ship_index, game_board, rows_restriction
 
     # Se pone el barco actual a lo ancho.
     can_put_ship = ships_operations.put_ship_on_column(game_board=game_board, current_row=current_row,
-                                    current_column=current_column, ship_len=current_ship_len, ship_id=ship_id,
-                                    rows_restrictions=rows_restrictions,columns_restrictions=columns_restrictions)
+                                                       current_column=current_column, ship_len=current_ship_len, ship_id=ship_id,
+                                                       rows_occupation=rows_restrictions, columns_occupation=columns_restrictions)
 
     if can_put_ship:
 
@@ -66,8 +70,8 @@ def vertical_combination(ships, current_ship_index, game_board, rows_restriction
 
         # Se elimina el barco.
         ships_operations.remove_ship_on_column(board=game_board, current_row=current_row, current_column=current_column,
-                                            ship_len=current_ship_len, rows_restrictions=rows_restrictions,
-                                            columns_restrictions=columns_restrictions)
+                                               ship_len=current_ship_len, rows_occupation=rows_restrictions,
+                                               columns=columns_restrictions)
 
 def build_best_solution(ships, current_ship_index, game_board, rows_restrictions, columns_restrictions,
                         best_local_solution, best_global_solution, current_row, current_column):
@@ -83,6 +87,9 @@ def build_best_solution(ships, current_ship_index, game_board, rows_restrictions
 
     current_ship_len = ships[current_ship_index]
 
+    if (best_local_solution[PENDING_DEMAND] - sum(ships[current_ship_index:])*2) >= best_global_solution[PENDING_DEMAND]:
+        return
+
     if ((best_local_solution[LAST_USED_SHIP] == current_ship_len) and
         ((current_ship_len > rows_restrictions[current_row]) or
         (current_ship_len > columns_restrictions[current_column]))):
@@ -91,8 +98,11 @@ def build_best_solution(ships, current_ship_index, game_board, rows_restrictions
                             best_local_solution, best_global_solution, current_row, current_column)
         return
 
-    for i in range(len(rows_restrictions)):
-        for j in range(len(columns_restrictions)):
+    most_demanded_rows = get_most_demanded_indexes(rows_restrictions)
+    most_demanded_columns = get_most_demanded_indexes(columns_restrictions)
+
+    for i in most_demanded_rows:
+        for j in most_demanded_columns:
 
             # Pongo el barco actual a lo largo.
             horizontal_combination(ships, current_ship_index, game_board, rows_restrictions, columns_restrictions,
@@ -105,6 +115,7 @@ def build_best_solution(ships, current_ship_index, game_board, rows_restrictions
     build_best_solution(ships, current_ship_index+1, game_board, rows_restrictions, columns_restrictions,
                                best_local_solution, best_global_solution, current_row, current_column)
     return
+
 
 def build_best_game_board(rows_restrictions, columns_restrictions, ships):
 
@@ -119,15 +130,16 @@ def build_best_game_board(rows_restrictions, columns_restrictions, ships):
     build_best_solution(ships, 0, game_board, rows_restrictions, columns_restrictions,
                         best_local_solution, best_global_solution, 0, 0)
 
-    return best_global_solution[GAME_BOARD]
+    return best_global_solution
 
 
 def build_game_board(dataset_name):
     rows_restrictions, columns_restrictions, ships_list = (datasets_parser_partIII
                                                           .parse_dataset("datasets_partIII/",dataset_name))
+
     return build_best_game_board(rows_restrictions, columns_restrictions, ships_list)
 
+best_solution = build_game_board("5_5_6.txt")
 
-game_board = build_game_board("3_3_2.txt")
-
-print_matrix(game_board)
+print_matrix(best_solution[GAME_BOARD])
+print(f"Demanda pendiente: {best_solution[PENDING_DEMAND]}")
