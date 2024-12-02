@@ -1,0 +1,3 @@
+Colocar en esta carpeta los casos de prueba externos. Se espera que los datos vengan
+en el mismo formato que los casos de prueba locales (y sin comentarios, es decir, solo datos
+para el parseo).

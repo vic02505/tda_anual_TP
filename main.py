@@ -57,7 +57,7 @@ def main(arguments):
         if len(arguments) > 2:
             if arguments[2] == "-e":
                 print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso externos...")
-                #dynamic_coins_game.run_use_cases("part_I/extern_datasets")
+                dynamic_coins_game.run_use_cases("part_I/extern_datasets")
                 print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
                 return
         else:

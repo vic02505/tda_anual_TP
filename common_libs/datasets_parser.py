@@ -1,6 +1,5 @@
 
 import os
-from audioop import error
 
 def get_coins_list(dataset_path):
 
@@ -22,7 +21,7 @@ def get_datasets_list(directory_name):
     try:
         for dataset in os.listdir(aboslute_path):
 
-            if dataset !=  "resultados_esperados.txt":
+            if (dataset !=  "resultados_esperados.txt") and (dataset != "leeme.txt"):
                 dataset_absolute_path = os.path.join(aboslute_path, dataset)
                 datasets_list.append(get_coins_list(dataset_absolute_path))
     except Exception as e:

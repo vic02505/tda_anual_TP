@@ -22,7 +22,8 @@ def get_datasets_list(directory_name):
     try:
         for dataset in os.listdir(absolute_path):
 
-            if (dataset !=  "resultados_esperados.txt") and (dataset != "resultados_esperados_tablero.txt"):
+            if ((dataset !=  "resultados_esperados.txt") and (dataset != "resultados_esperados_tablero.txt")
+                    and (dataset != "leeme.txt")):
                 dataset_absolute_path = os.path.join(absolute_path, dataset)
                 datasets_list.append(parse_dataset(dataset_absolute_path))
 
