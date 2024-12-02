@@ -1,6 +1,7 @@
 from part_I import greedy_coins_game
 from part_II import dynamic_coins_game
-from common_libs import coins_game_output_generator
+from part_III import naval_battle_bt
+from common_libs import coins_game_output_generator, bt_output_generator
 
 import sys
 
@@ -10,10 +11,13 @@ EXTERN_GREEDY = "extern_greedy_" # Datasets externos greedy.
 LOCAL_PD = "local_pd_"  # Datasets locales programación dinámica
 EXTERN_PD = "extern_pd_" # Datasets externos programación dinámica
 
+LOCAL_BT = "local_bt_"  # Datasets locales backtracking
+EXTERN_BT = "extern_bt_" # Datasets externos backtracking
+
 def main(arguments):
 
     if len(arguments) < 2:
-        raise Exception("[ERROR] No se especifiaron los flags necesarios para realizar la ejecución!")
+        raise Exception("[ERROR] No se especificaron los flags necesarios para realizar la ejecución!")
 
     flag = arguments[1]
 
@@ -29,8 +33,10 @@ def main(arguments):
         print("[GREEDY] Casos reproducidos.")
 
         print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
-        #naval_battle_bt.build_naval_battle_game_board("a")
+        outputs = naval_battle_bt.run_use_cases("part_III/local_datasets")
+        bt_output_generator.generate_output_for_bt(outputs, LOCAL_BT)
         print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
+
     elif flag == "-g":
 
         if len(arguments) > 2:
@@ -61,19 +67,29 @@ def main(arguments):
             print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
 
     elif flag == "-b":
-        print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
-        #naval_battle_bt.build_naval_battle_game_board("a")
-        print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
+
+        if len(arguments) > 2:
+            if arguments[2] == "-e":
+                print("[BACKTRACKING] Reproduciendo casos de uso externos...")
+                outputs = naval_battle_bt.run_use_cases("part_III/extern_datasets")
+                bt_output_generator.generate_output_for_bt(outputs, EXTERN_BT)
+                print("[BACKTRACKING] Casos reproducidos.")
+        else:
+            print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
+            outputs = naval_battle_bt.run_use_cases("part_III/local_datasets")
+            bt_output_generator.generate_output_for_bt(outputs, LOCAL_BT)
+            print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
     else:
         raise Exception("[ERROR] Algoritmo no reconocido!")
 
 
-
-
-# -a para todos los algoritmos con los casos de uso locales.
-# -g para gredy
-# -d para dinamico
-# -b para backtracking
-# -e para los casos externos.
+'''
+    FLAGS DE EJECUCIÓN
+    -a para todos los algoritmos con los casos de uso locales
+    -g para greedy
+    -d para programación dinámica
+    -b para backtracking
+    -e concantenado con -g, -d o -b para los casos de uso externos
+'''
 if __name__ == "__main__":
     main(sys.argv)

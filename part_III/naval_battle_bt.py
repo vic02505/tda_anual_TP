@@ -213,24 +213,28 @@ def build_game_board_bt(ships, current_ship_index, game_board, rows_restrictions
     return best_game_board, global_solution
 
 
-def build_naval_battle_game_board(dataset_name):
-    rows_restrictions, columns_restrictions, ships = (datasets_parser_partIII
-                                                          .parse_dataset("local_datasets/",dataset_name))
-
+def build_naval_battle_game_board(rows_restrictions, columns_restrictions, ships ):
     game_board = [[0 for _ in range(len(columns_restrictions))] for _ in range(len(rows_restrictions))]
     rows_occupation = [0]*len(rows_restrictions)
     columns_occupation = [0]*len(columns_restrictions)
     ships.sort(reverse=True)
 
-
     return build_game_board_bt(ships,0, game_board, rows_restrictions, columns_restrictions,
                                rows_occupation, columns_occupation, 0, 0)
 
 
-files_name = ["3_3_2.txt", "5_5_6.txt", "8_7_10.txt" ,"10_3_3.txt", "10_10_10.txt", "12_12_21.txt",
-              "15_10_15.txt", "20_20_20.txt", "20_25_30.txt", "30_25_25.txt"]
+def run_use_cases(directory_name):
 
+    datasets_list = datasets_parser_partIII.get_datasets_list(directory_name)
 
-_, score = build_naval_battle_game_board("30_25_25.txt")
+    if datasets_list is None:
+        print("[ERROR] No se pudieron cargar los datasets.")
+        return
 
-print(score)
+    results = []
+
+    for dataset in datasets_list:
+        game_board, best_solution = build_naval_battle_game_board(dataset[0], dataset[1], dataset[2])
+        results.append((game_board, best_solution))
+
+    return results
