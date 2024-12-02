@@ -27,15 +27,15 @@ def main(arguments):
         coins_game_output_generator.generate_output_for_greedy(outputs, LOCAL_GREEDY)
         print("[GREEDY] Casos reproducidos.")
 
-        print("[GREEDY] Reproduciendo casos de locales...")
-        outputs = greedy_coins_game.run_use_cases("part_I/local_datasets")
-        coins_game_output_generator.generate_output_for_greedy(outputs, LOCAL_GREEDY)
-        print("[GREEDY] Casos reproducidos.")
+        print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso locales...")
+        outputs = dynamic_coins_game.run_use_cases("part_II/local_datasets")
+        coins_game_output_generator.generate_output_for_dynamic(outputs, LOCAL_PD)
+        print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
 
-        print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
+        print("[BACKTRACKING] Reproduciendo casos de uso locales...")
         outputs = naval_battle_bt.run_use_cases("part_III/local_datasets")
         bt_output_generator.generate_output_for_bt(outputs, LOCAL_BT)
-        print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
+        print("[BACKTRACKING] Casos reproducidos.")
 
     elif flag == "-g":
 
@@ -75,10 +75,10 @@ def main(arguments):
                 bt_output_generator.generate_output_for_bt(outputs, EXTERN_BT)
                 print("[BACKTRACKING] Casos reproducidos.")
         else:
-            print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
+            print("[BACKTRACKING] Reproduciendo casos locales...")
             outputs = naval_battle_bt.run_use_cases("part_III/local_datasets")
             bt_output_generator.generate_output_for_bt(outputs, LOCAL_BT)
-            print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
+            print("[BACKTRACKING] Casos reproducidos.")
     else:
         raise Exception("[ERROR] Algoritmo no reconocido!")
 
@@ -89,7 +89,7 @@ def main(arguments):
     -g para greedy
     -d para programación dinámica
     -b para backtracking
-    -e concantenado con -g, -d o -b para los casos de uso externos
+    -e después de -g, -d o -b para los casos de uso externos
 '''
 if __name__ == "__main__":
     main(sys.argv)
