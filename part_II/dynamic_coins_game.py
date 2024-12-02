@@ -80,9 +80,8 @@ def get_gains_matrix(coins_list):
     return gains_matrix
 
 def start_game(dataset):
-    coins_list = []
     gains_matrix =  get_gains_matrix(dataset)
-    return gains_matrix[0][len(coins_list)-1]
+    return gains_matrix[0][len(dataset)-1]
 
 def run_use_cases(directory_name):
     datasets_list = datasets_parser.get_datasets_list(directory_name)

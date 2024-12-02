@@ -23,9 +23,10 @@ def main(arguments):
         coins_game_output_generator.generate_output_for_greedy(outputs, LOCAL_GREEDY)
         print("[GREEDY] Casos reproducidos.")
 
-        print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso...")
-        #dynamic_coins_game.play_game("a")
-        print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
+        print("[GREEDY] Reproduciendo casos de locales...")
+        outputs = greedy_coins_game.run_use_cases("part_I/local_datasets")
+        coins_game_output_generator.generate_output_for_greedy(outputs, LOCAL_GREEDY)
+        print("[GREEDY] Casos reproducidos.")
 
         print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso.")
         #naval_battle_bt.build_naval_battle_game_board("a")
@@ -55,7 +56,7 @@ def main(arguments):
                 return
         else:
             print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso locales...")
-            outputs = dynamic_coins_game.run_use_cases("part_I/local_datasets")
+            outputs = dynamic_coins_game.run_use_cases("part_II/local_datasets")
             coins_game_output_generator.generate_output_for_dynamic(outputs, LOCAL_PD)
             print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
 

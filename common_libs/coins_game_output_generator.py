@@ -57,7 +57,7 @@ def generate_content_for_dynamic(output):
 
     content = ""
 
-    sophia_gains = sum(output)
+    sophia_gains = output
     sophia_gains_str = str(sophia_gains)
 
     content += "Ganancia total de Sophia: " + sophia_gains_str + "\n"
