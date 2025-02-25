@@ -2,6 +2,8 @@ import os
 
 OUTPUTS_DIRECTORY = "algorithms_output"
 
+OUTPUTS_DIR_EXTERN = "extern_outputs_greedy"
+
 LOCAL_GREEDY = "local_greedy_"  # Datasets locales greedy
 EXTERN_GREEDY = "extern_greedy_" # Datasets externos greedy.
 
@@ -29,24 +31,22 @@ def generate_content_for_greedy(output):
 
     return content
 
-def generate_output_for_greedy(coins_game_outputs, output_type):
+
+def generate_output_for_greedy(output, file_name, output_type):
 
     try:
         if not os.path.exists(OUTPUTS_DIRECTORY):
             os.makedirs(OUTPUTS_DIRECTORY)
 
-        file_id = 1
-        for output in coins_game_outputs:
+        file_name = output_type + file_name
 
-            file_name = output_type + str(file_id)
-            file_path = os.path.join(OUTPUTS_DIRECTORY, file_name)
+        file_path = os.path.join(OUTPUTS_DIRECTORY, file_name)
 
-            with open(file_path, "w") as output_file:
-                content = generate_content_for_greedy(output)
-                output_file.write(content)
-                output_file.close()
+        with open(file_path, "w") as output_file:
+            content = generate_content_for_greedy(output)
+            output_file.write(content)
+            output_file.close()
 
-            file_id += 1
 
     except Exception as e:
         print(f"[ERROR] {e}")
@@ -64,24 +64,21 @@ def generate_content_for_dynamic(output):
 
     return content
 
-def generate_output_for_dynamic(coins_game_outputs, output_type):
+def generate_output_for_dynamic(output, file_name, output_type):
 
     try:
         if not os.path.exists(OUTPUTS_DIRECTORY):
             os.makedirs(OUTPUTS_DIRECTORY)
 
-        file_id = 1
-        for output in coins_game_outputs:
+        file_name = output_type + file_name
 
-            file_name = output_type + str(file_id)
-            file_path = os.path.join(OUTPUTS_DIRECTORY, file_name)
+        file_path = os.path.join(OUTPUTS_DIRECTORY, file_name)
 
-            with open(file_path, "w") as output_file:
-                content = generate_content_for_dynamic(output)
-                output_file.write(content)
-                output_file.close()
+        with open(file_path, "w") as output_file:
+            content = generate_content_for_dynamic(output)
+            output_file.write(content)
+            output_file.close()
 
-            file_id += 1
 
     except Exception as e:
         print(f"[ERROR] {e}")

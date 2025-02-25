@@ -1,7 +1,7 @@
 from part_I import greedy_coins_game
 from part_II import dynamic_coins_game
 from part_III import naval_battle_bt
-from common_libs import coins_game_output_generator, bt_output_generator
+from common_libs import coins_game_output_generator, bt_output_generator, datasets_parser, datasets_parser_partIII
 
 import sys
 
@@ -23,18 +23,45 @@ def main(arguments):
 
     if flag == "-a":
         print("[GREEDY] Reproduciendo casos de uso...")
-        outputs = greedy_coins_game.run_use_cases("part_I/local_datasets")
-        coins_game_output_generator.generate_output_for_greedy(outputs, LOCAL_GREEDY)
+        datasets_list_g, dataset_names_g = datasets_parser.get_datasets_list("part_I/local_datasets")
+        if datasets_list_g is None:
+            print("[ERROR] No se pudieron cargar los datasets.")
+
+        for i in range(len(datasets_list_g)):
+            dataset = datasets_list_g[i]
+            file_name = dataset_names_g[i]
+            output = greedy_coins_game.run_use_case(dataset)
+            coins_game_output_generator.generate_output_for_greedy(output, file_name, LOCAL_GREEDY)
+
         print("[GREEDY] Casos reproducidos.")
 
+
         print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso locales...")
-        outputs = dynamic_coins_game.run_use_cases("part_II/local_datasets")
-        coins_game_output_generator.generate_output_for_dynamic(outputs, LOCAL_PD)
+        datasets_list_pd, dataset_names_pd = datasets_parser.get_datasets_list("part_II/local_datasets")
+        if datasets_list_pd is None:
+            print("[ERROR] No se pudieron cargar los datasets.")
+
+        for i in range(len(datasets_list_pd)):
+            dataset = datasets_list_pd[i]
+            file_name = dataset_names_pd[i]
+
+            outputs = dynamic_coins_game.run_use_case(dataset)
+            coins_game_output_generator.generate_output_for_dynamic(outputs, file_name, LOCAL_PD)
+        
         print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
 
+        
         print("[BACKTRACKING] Reproduciendo casos de uso locales...")
-        outputs = naval_battle_bt.run_use_cases("part_III/local_datasets")
-        bt_output_generator.generate_output_for_bt(outputs, LOCAL_BT)
+        datasets_list_bt, dataset_names_bt = datasets_parser_partIII.get_datasets_list("part_III/local_datasets")
+        if datasets_list_bt is None:
+            print("[ERROR] No se pudieron cargar los datasets.")
+
+        for i in range(len(datasets_list_bt)):
+            dataset = datasets_list_bt[i]
+            file_name = dataset_names_bt[i]
+
+            output = naval_battle_bt.run_use_case(dataset)
+            bt_output_generator.generate_output_for_bt(output, file_name, LOCAL_BT)
         print("[BACKTRACKING] Casos reproducidos.")
 
     elif flag == "-g":
@@ -42,14 +69,30 @@ def main(arguments):
         if len(arguments) > 2:
             if arguments[2] == "-e":
                 print("[GREEDY] Reproduciendo casos de uso externos...")
-                outputs = greedy_coins_game.run_use_cases("part_I/extern_datasets")
-                coins_game_output_generator.generate_output_for_greedy(outputs, EXTERN_GREEDY)
+                
+                datasets_list_g, dataset_names_g = datasets_parser.get_datasets_list("part_I/extern_datasets")
+                if datasets_list_g is None:
+                    print("[ERROR] No se pudieron cargar los datasets.")
+
+                for i in range(len(datasets_list_g)):
+                    dataset = datasets_list_g[i]
+                    file_name = dataset_names_g[i]
+                    output = greedy_coins_game.run_use_case(dataset)
+                    coins_game_output_generator.generate_output_for_greedy(output, file_name, EXTERN_GREEDY)
+
                 print("[GREEDY] Casos reproducidos.")
                 return
         else:
             print("[GREEDY] Reproduciendo casos de locales...")
-            outputs = greedy_coins_game.run_use_cases("part_I/local_datasets")
-            coins_game_output_generator.generate_output_for_greedy(outputs, LOCAL_GREEDY)
+            datasets_list_g, dataset_names_g = datasets_parser.get_datasets_list("part_I/local_datasets")
+            if datasets_list_g is None:
+                print("[ERROR] No se pudieron cargar los datasets.")
+
+            for i in range(len(datasets_list_g)):
+                dataset = datasets_list_g[i]
+                file_name = dataset_names_g[i]
+                output = greedy_coins_game.run_use_case(dataset)
+                coins_game_output_generator.generate_output_for_greedy(output, file_name, LOCAL_GREEDY)
             print("[GREEDY] Casos reproducidos.")
 
     elif flag == "-d":
@@ -57,13 +100,32 @@ def main(arguments):
         if len(arguments) > 2:
             if arguments[2] == "-e":
                 print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso externos...")
+                datasets_list_pd, dataset_names_pd = datasets_parser.get_datasets_list("part_II/extern_datasets")
+                if datasets_list_pd is None:
+                    print("[ERROR] No se pudieron cargar los datasets.")
+
+                for i in range(len(datasets_list_pd)):
+                    dataset = datasets_list_pd[i]
+                    file_name = dataset_names_pd[i]
+
+                    outputs = dynamic_coins_game.run_use_case(dataset)
+                    coins_game_output_generator.generate_output_for_dynamic(outputs, file_name, EXTERN_PD)
+
                 dynamic_coins_game.run_use_cases("part_I/extern_datasets")
                 print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
                 return
         else:
             print("[PROGRAMACIÓN DINÁMICA] Reproduciendo casos de uso locales...")
-            outputs = dynamic_coins_game.run_use_cases("part_II/local_datasets")
-            coins_game_output_generator.generate_output_for_dynamic(outputs, LOCAL_PD)
+            datasets_list_pd, dataset_names_pd = datasets_parser.get_datasets_list("part_II/local_datasets")
+            if datasets_list_pd is None:
+                print("[ERROR] No se pudieron cargar los datasets.")
+
+            for i in range(len(datasets_list_pd)):
+                dataset = datasets_list_pd[i]
+                file_name = dataset_names_pd[i]
+
+                outputs = dynamic_coins_game.run_use_case(dataset)
+                coins_game_output_generator.generate_output_for_dynamic(outputs, file_name, LOCAL_PD)
             print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
 
     elif flag == "-b":
@@ -71,13 +133,29 @@ def main(arguments):
         if len(arguments) > 2:
             if arguments[2] == "-e":
                 print("[BACKTRACKING] Reproduciendo casos de uso externos...")
-                outputs = naval_battle_bt.run_use_cases("part_III/extern_datasets")
-                bt_output_generator.generate_output_for_bt(outputs, EXTERN_BT)
+                datasets_list_bt, dataset_names_bt = datasets_parser_partIII.get_datasets_list("part_III/extern_datasets")
+                if datasets_list_bt is None:
+                    print("[ERROR] No se pudieron cargar los datasets.")
+
+                for i in range(len(datasets_list_bt)):
+                    dataset = datasets_list_bt[i]
+                    file_name = dataset_names_bt[i]
+
+                    output = naval_battle_bt.run_use_case(dataset)
+                    bt_output_generator.generate_output_for_bt(output, file_name, EXTERN_BT)
                 print("[BACKTRACKING] Casos reproducidos.")
         else:
             print("[BACKTRACKING] Reproduciendo casos locales...")
-            outputs = naval_battle_bt.run_use_cases("part_III/local_datasets")
-            bt_output_generator.generate_output_for_bt(outputs, LOCAL_BT)
+            datasets_list_bt, dataset_names_bt = datasets_parser_partIII.get_datasets_list("part_III/local_datasets")
+            if datasets_list_bt is None:
+                print("[ERROR] No se pudieron cargar los datasets.")
+
+            for i in range(len(datasets_list_bt)):
+                dataset = datasets_list_bt[i]
+                file_name = dataset_names_bt[i]
+
+                output = naval_battle_bt.run_use_case(dataset)
+                bt_output_generator.generate_output_for_bt(output, file_name, LOCAL_BT)
             print("[BACKTRACKING] Casos reproducidos.")
     else:
         raise Exception("[ERROR] Algoritmo no reconocido!")

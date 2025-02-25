@@ -223,18 +223,7 @@ def build_naval_battle_game_board(rows_restrictions, columns_restrictions, ships
                                rows_occupation, columns_occupation, 0, 0)
 
 
-def run_use_cases(directory_name):
+def run_use_case(dataset):
+    game_board, best_solution = build_naval_battle_game_board(dataset[0], dataset[1], dataset[2])
 
-    datasets_list = datasets_parser_partIII.get_datasets_list(directory_name)
-
-    if datasets_list is None:
-        print("[ERROR] No se pudieron cargar los datasets.")
-        return
-
-    results = []
-
-    for dataset in datasets_list:
-        game_board, best_solution = build_naval_battle_game_board(dataset[0], dataset[1], dataset[2])
-        results.append((game_board, best_solution))
-
-    return results
+    return (game_board, best_solution)

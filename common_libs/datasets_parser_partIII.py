@@ -18,6 +18,7 @@ def get_datasets_list(directory_name):
     path = os.path.abspath("") + "/"
     absolute_path = path + directory_name
     datasets_list = []
+    dataset_names = []
 
     try:
         for dataset in os.listdir(absolute_path):
@@ -26,9 +27,10 @@ def get_datasets_list(directory_name):
                     and (dataset != "leeme.txt")):
                 dataset_absolute_path = os.path.join(absolute_path, dataset)
                 datasets_list.append(parse_dataset(dataset_absolute_path))
+                dataset_names.append(dataset)
 
     except Exception as e:
         print(f"[ERROR] {e}")
         return None
 
-    return datasets_list
+    return datasets_list, dataset_names

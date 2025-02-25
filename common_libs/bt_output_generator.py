@@ -22,24 +22,19 @@ def generate_content_for_bt(output):
 
     return content
 
-def generate_output_for_bt(bt_outputs, output_type):
+def generate_output_for_bt(output, file_name, output_type):
 
     try:
         if not os.path.exists(OUTPUTS_DIRECTORY):
             os.makedirs(OUTPUTS_DIRECTORY)
 
-        file_id = 1
-        for output in bt_outputs:
+        file_name = output_type + file_name
+        file_path = os.path.join(OUTPUTS_DIRECTORY, file_name)
 
-            file_name = output_type + str(file_id)
-            file_path = os.path.join(OUTPUTS_DIRECTORY, file_name)
-
-            with open(file_path, "w") as output_file:
-                content = generate_content_for_bt(output)
-                output_file.write(content)
-                output_file.close()
-
-            file_id += 1
+        with open(file_path, "w") as output_file:
+            content = generate_content_for_bt(output)
+            output_file.write(content)
+            output_file.close()
 
     except Exception as e:
         print(f"[ERROR] {e}")

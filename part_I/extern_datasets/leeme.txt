@@ -1,3 +1,3 @@
-Colocar en esta carpeta los casos de prueba externos. Se espera que los datos vengan
-en el mismo formato que los casos de prueba locales (y sin comentarios, es decir, solo datos
-para el parseo).
+Colocar aca los archivos para pruebas locales. A diferencia de los otros casos. Solo se
+espera que los archivos vengan en el mismo formato que los archivos de la carpeta local_datasets
+(los comentarios de las primeras lineas no generan problemas para el parseo).

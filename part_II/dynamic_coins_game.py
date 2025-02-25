@@ -97,3 +97,8 @@ def run_use_cases(directory_name):
         results.append(sophia_gains)
 
     return results
+
+def run_use_case(dataset):
+    sophia_gains = start_game(dataset)
+    return sophia_gains
+

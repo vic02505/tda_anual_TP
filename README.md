@@ -50,4 +50,7 @@ Todas las salidas del proyecto son generadas en el directorio **algorithms_outpu
 defecto el directorio viene con contenido de los datasets locales. Volver a ejecutar el proyecto únicamente
 sobreescribirá los archivos existentes, y en caso de correr con los datasets externos, generará los archivos
 correspondientes.
-
+Los dataset locales se guardaran como "local_{tipo de algoritmo}_{nombre_de_archivo}". Por ejemplo si se ejecuta
+el archiv "20.txt", se va a guardar como "local_greedy_20.txt"
+Los dataset externos se guardaran como "extern_{tipo de algoritmo}_{nombre_de_archivo}". Por ejemplo si se ejecuta
+el archiv "test1.txt", se va a guardar como "extern_greedy_test1.txt"

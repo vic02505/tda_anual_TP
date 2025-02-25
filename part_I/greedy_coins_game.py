@@ -43,17 +43,7 @@ def coins_game(dataset):
     sophia_coins, mateo_coins = play_game(dataset)
     return sophia_coins, mateo_coins
 
-def run_use_cases(directory_name):
-    datasets_list = datasets_parser.get_datasets_list(directory_name)
 
-    if datasets_list is None:
-        print("[ERROR] No se pudieron cargar los datasets.")
-        return
-
-    results = []
-
-    for dataset in datasets_list:
-        sophia_coins, mateo_coins =  coins_game(dataset)
-        results.append((sophia_coins, mateo_coins))
-
-    return results
+def run_use_case(dataset):
+    sophia_coins, mateo_coins =  coins_game(dataset)
+    return (sophia_coins, mateo_coins)
