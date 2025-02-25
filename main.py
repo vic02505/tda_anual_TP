@@ -45,8 +45,8 @@ def main(arguments):
             dataset = datasets_list_pd[i]
             file_name = dataset_names_pd[i]
 
-            outputs = dynamic_coins_game.run_use_case(dataset)
-            coins_game_output_generator.generate_output_for_dynamic(outputs, file_name, LOCAL_PD)
+            output, coins_sophia, coins_mateo = dynamic_coins_game.run_use_case(dataset)
+            coins_game_output_generator.generate_output_for_dynamic(output, coins_sophia, coins_mateo, file_name, LOCAL_PD)
         
         print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
 
@@ -108,8 +108,8 @@ def main(arguments):
                     dataset = datasets_list_pd[i]
                     file_name = dataset_names_pd[i]
 
-                    outputs = dynamic_coins_game.run_use_case(dataset)
-                    coins_game_output_generator.generate_output_for_dynamic(outputs, file_name, EXTERN_PD)
+                    output, coins_sophia, coins_mateo = dynamic_coins_game.run_use_case(dataset)
+                    coins_game_output_generator.generate_output_for_dynamic(output, coins_sophia, coins_mateo, file_name, EXTERN_PD)
 
                 dynamic_coins_game.run_use_cases("part_I/extern_datasets")
                 print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
@@ -124,8 +124,8 @@ def main(arguments):
                 dataset = datasets_list_pd[i]
                 file_name = dataset_names_pd[i]
 
-                outputs = dynamic_coins_game.run_use_case(dataset)
-                coins_game_output_generator.generate_output_for_dynamic(outputs, file_name, LOCAL_PD)
+                output, coins_sophia, coins_mateo = dynamic_coins_game.run_use_case(dataset)
+                coins_game_output_generator.generate_output_for_dynamic(output, coins_sophia, coins_mateo, file_name, LOCAL_PD)
             print("[PROGRAMACIÓN DINÁMICA] Casos reproducidos.")
 
     elif flag == "-b":

@@ -53,6 +53,24 @@ def best_next_coin(i, j, gains_matrix, coins_list):
     else:
         return gains_matrix[i][j-1]
 
+def reconstruct_solution(coins_list, gains_matrix):
+    i = 0 
+    j = len(coins_list) - 1
+    choices = []  # Lista para almacenar el orden de elecciones de monedas
+
+    while i <= j:
+        left_option = coins_list[i] + best_next_coin(i+1, j, gains_matrix, coins_list)
+        right_option = coins_list[j] + best_next_coin(i, j-1, gains_matrix, coins_list)
+
+        if gains_matrix[i][j] == left_option:
+            choices.append(coins_list[i])
+            i += 1
+        else:
+            choices.append(coins_list[j])
+            j -= 1
+
+    return choices
+
 
 def get_gains_matrix(coins_list):
 
@@ -81,24 +99,18 @@ def get_gains_matrix(coins_list):
 
 def start_game(dataset):
     gains_matrix =  get_gains_matrix(dataset)
-    return gains_matrix[0][len(dataset)-1]
+    coins = reconstruct_solution(dataset, gains_matrix)
+    coins_sophia = []
+    coins_mateo = []
+    for i in range(len(coins)):
+        if i % 2 == 0: # Siempre empieza Sophia agarrando la primera moneda
+            coins_sophia.append(coins[i])
+        else:
+            coins_mateo.append(coins[i])    
 
-def run_use_cases(directory_name):
-    datasets_list = datasets_parser.get_datasets_list(directory_name)
-
-    if datasets_list is None:
-        print("[ERROR] No se pudieron cargar los datasets.")
-        return
-
-    results = []
-
-    for dataset in datasets_list:
-        sophia_gains =  start_game(dataset)
-        results.append(sophia_gains)
-
-    return results
+    return gains_matrix[0][len(dataset)-1], coins_sophia, coins_mateo
 
 def run_use_case(dataset):
-    sophia_gains = start_game(dataset)
-    return sophia_gains
+    sophia_gains, coins_sophia, coins_mateo = start_game(dataset)
+    return sophia_gains, coins_sophia, coins_mateo
 

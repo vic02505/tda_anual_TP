@@ -53,18 +53,26 @@ def generate_output_for_greedy(output, file_name, output_type):
         return
 
 
-def generate_content_for_dynamic(output):
+def generate_content_for_dynamic(output, coins_sophia, coins_mateo):
 
     content = ""
 
     sophia_gains = output
+    mateo_gains = sum(coins_mateo)
+
+    mateo_coins_str =  "[" + (",".join(map(str, coins_mateo))) + "]"
+    mateo_gains_str = str(mateo_gains)
+    sophia_coins_str = "[" + (",".join(map(str, coins_sophia))) + "]"
     sophia_gains_str = str(sophia_gains)
 
     content += "Ganancia total de Sophia: " + sophia_gains_str + "\n"
-
+    content += "Monedas obtenidas por Sophia: " + sophia_coins_str + "\n"
+    content += "Ganancia total de Mateo: " + mateo_gains_str + "\n"
+    content += "Monedas obtenidas por Mateo: " + mateo_coins_str + "\n"
+    
     return content
 
-def generate_output_for_dynamic(output, file_name, output_type):
+def generate_output_for_dynamic(output, coins_sophia, coins_mateo , file_name, output_type):
 
     try:
         if not os.path.exists(OUTPUTS_DIRECTORY):
@@ -75,7 +83,7 @@ def generate_output_for_dynamic(output, file_name, output_type):
         file_path = os.path.join(OUTPUTS_DIRECTORY, file_name)
 
         with open(file_path, "w") as output_file:
-            content = generate_content_for_dynamic(output)
+            content = generate_content_for_dynamic(output, coins_sophia, coins_mateo)
             output_file.write(content)
             output_file.close()
 
