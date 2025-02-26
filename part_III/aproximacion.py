@@ -3,11 +3,24 @@ from common_libs.datasets_parser_partIII import parse_dataset
 HORIZONTAL = "horizontal"
 VERTICAL = "vertical"
 
+
+def pos_valida(board, r, c):
+    if board[r][c] != 0:
+        return False
+    for dr in [-1, 0, 1]:
+        for dc in [-1, 0, 1]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < len(board) and 0 <= nc < len(board[0]):
+                if board[nr][nc] != 0:
+                    return False
+    return True
+
+
 def horizontal_pos_available(board, row, col, ship_len):
     if col + ship_len > len(board[0]):
         return False
     for c in range(col, col + ship_len):
-        if board[row][c] != 0:
+        if not pos_valida(board, row, c):
             return False
     return True
 
@@ -15,7 +28,7 @@ def vertical_pos_available(board, row, col, ship_len):
     if row + ship_len > len(board):
         return False
     for r in range(row, row + ship_len):
-        if board[r][col] != 0:
+        if not pos_valida(board, r, col):
             return False
     return True
 
@@ -32,6 +45,8 @@ def position_vertical(board, row, col, ship_len, ship_id, row_demand, col_demand
     col_demand[col] -= ship_len
 
 def battleship_approximation(n, m, row_demand, col_demand, ships):
+    ships = sorted(ships, reverse=True)
+
     game_board = [[0 for _ in range(m)] for _ in range(n)]
     row_demand_available = row_demand[:]
     col_demand_available = col_demand[:]
@@ -75,7 +90,7 @@ def battleship_approximation(n, m, row_demand, col_demand, ships):
 
         ship_id += 1
 
-    aproximation = sum(ships_in_game)
+    aproximation = sum(ships_in_game) * 2
     return game_board, aproximation
 
 def build_game_board(dataset_name):
