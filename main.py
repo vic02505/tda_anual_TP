@@ -1,7 +1,8 @@
 from part_I import greedy_coins_game
 from part_II import dynamic_coins_game
-from part_III import naval_battle_bt
+from part_III import naval_battle_bt, aproximacion
 from common_libs import coins_game_output_generator, bt_output_generator, datasets_parser, datasets_parser_partIII
+from common_libs import ap_output_generator
 
 import sys
 
@@ -13,6 +14,9 @@ EXTERN_PD = "extern_pd_" # Datasets externos programación dinámica
 
 LOCAL_BT = "local_bt_"  # Datasets locales backtracking
 EXTERN_BT = "extern_bt_" # Datasets externos backtracking
+
+LOCAL_APPROX = "local_approx_"  # Datasets locales de aproximación
+EXTERN_APPROX = "extern_approx_"  # Datasets externos de aproximación
 
 def main(arguments):
 
@@ -63,6 +67,20 @@ def main(arguments):
             output = naval_battle_bt.run_use_case(dataset)
             bt_output_generator.generate_output_for_bt(output, file_name, LOCAL_BT)
         print("[BACKTRACKING] Casos reproducidos.")
+
+        print("[APROXIMACIÓN] Reproduciendo casos de uso locales...")
+        datasets_list_bt, dataset_names_bt = datasets_parser_partIII.get_datasets_list("part_III/local_datasets")
+        if datasets_list_bt is None:
+            print("[ERROR] No se pudieron cargar los datasets.")
+
+        for i in range(len(datasets_list_bt)):
+            dataset = datasets_list_bt[i]
+            file_name = dataset_names_bt[i]
+
+            output = aproximacion.run_use_case(dataset)
+            ap_output_generator.generate_output_for_approx(output, file_name, LOCAL_APPROX)
+        print("[APROXIMACIÓN] Casos reproducidos.")
+
 
     elif flag == "-g":
 
@@ -157,6 +175,36 @@ def main(arguments):
                 output = naval_battle_bt.run_use_case(dataset)
                 bt_output_generator.generate_output_for_bt(output, file_name, LOCAL_BT)
             print("[BACKTRACKING] Casos reproducidos.")
+    elif flag == "-ap":
+
+        if len(arguments) > 2:
+            if arguments[2] == "-e":
+                print("[APROXIMACIÓN] Reproduciendo casos de uso externos...")
+                datasets_list_bt, dataset_names_bt = datasets_parser_partIII.get_datasets_list(
+                    "part_III/extern_datasets")
+                if datasets_list_bt is None:
+                    print("[ERROR] No se pudieron cargar los datasets.")
+
+                for i in range(len(datasets_list_bt)):
+                    dataset = datasets_list_bt[i]
+                    file_name = dataset_names_bt[i]
+
+                    output = aproximacion.run_use_case(dataset)
+                    ap_output_generator.generate_output_for_approx(output, file_name, LOCAL_APPROX)
+                print("[APROXIMACIÓN] Casos reproducidos.")
+        else:
+            print("[APROXIMACIÓN] Reproduciendo casos de uso locales...")
+            datasets_list_bt, dataset_names_bt = datasets_parser_partIII.get_datasets_list("part_III/local_datasets")
+            if datasets_list_bt is None:
+                print("[ERROR] No se pudieron cargar los datasets.")
+
+            for i in range(len(datasets_list_bt)):
+                dataset = datasets_list_bt[i]
+                file_name = dataset_names_bt[i]
+
+                output = aproximacion.run_use_case(dataset)
+                ap_output_generator.generate_output_for_approx(output, file_name, LOCAL_APPROX)
+            print("[APROXIMACIÓN] Casos reproducidos.")
     else:
         raise Exception("[ERROR] Algoritmo no reconocido!")
 
@@ -167,7 +215,8 @@ def main(arguments):
     -g para greedy
     -d para programación dinámica
     -b para backtracking
-    -e después de -g, -d o -b para los casos de uso externos
+    -ap para aproximación
+    -e después de -g, -d, -b o -ap para los casos de uso externos
 '''
 if __name__ == "__main__":
     main(sys.argv)

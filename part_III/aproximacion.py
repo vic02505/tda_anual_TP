@@ -93,20 +93,8 @@ def battleship_approximation(n, m, row_demand, col_demand, ships):
     aproximation = sum(ships_in_game) * 2
     return game_board, aproximation
 
-def build_game_board(dataset_name):
-    row_demand, col_demand, ships = parse_dataset("datasets_partIII/", dataset_name)
+def run_use_case(dataset):
+    row_demand, col_demand, ships = dataset
     n = len(row_demand)
     m = len(col_demand)
     return battleship_approximation(n, m, row_demand, col_demand, ships)
-
-datasets = ["3_3_2.txt", "5_5_6.txt", "8_7_10.txt" ,"10_3_3.txt", "10_10_10.txt", "12_12_21.txt",
-              "15_10_15.txt", "20_20_20.txt", "20_25_30.txt", "30_25_25.txt"]
-
-for dataset in datasets:
-    print(f"\ninstancia: {dataset}")
-    game_board, aproximation = build_game_board(dataset)
-
-    # for row in game_board:
-    #     print(" ".join(map(str, row)))
-
-    print(f"Aproximación: {aproximation}")
