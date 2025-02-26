@@ -56,20 +56,37 @@ def best_next_coin(i, j, gains_matrix, coins_list):
 def reconstruct_solution(coins_list, gains_matrix):
     i = 0 
     j = len(coins_list) - 1
-    choices = []  # Lista para almacenar el orden de elecciones de monedas
+    choices_sophia = []  # Lista para almacenar el orden de elecciones de monedas
+    choices_mateo = []
 
     while i <= j:
         left_option = coins_list[i] + best_next_coin(i+1, j, gains_matrix, coins_list)
         right_option = coins_list[j] + best_next_coin(i, j-1, gains_matrix, coins_list)
-
-        if gains_matrix[i][j] == left_option:
-            choices.append(coins_list[i])
+        
+        if left_option >= right_option:
+            choices_sophia.append(coins_list[i])
             i += 1
+            if i > j: # No quedan mas monedas
+                continue
+            if coins_list[i] >= coins_list[j]:
+                choices_mateo.append(coins_list[i])
+                i += 1
+            else:
+                choices_mateo.append(coins_list[j])
+                j-= 1
         else:
-            choices.append(coins_list[j])
+            choices_sophia.append(coins_list[j])
             j -= 1
+            if i > j: #No quedan mas monedas
+                continue
+            if coins_list[i] >= coins_list[j]:
+                choices_mateo.append(coins_list[i])
+                i += 1
+            else:
+                choices_mateo.append(coins_list[j])
+                j-= 1
 
-    return choices
+    return choices_sophia, choices_mateo
 
 
 def get_gains_matrix(coins_list):
@@ -99,14 +116,12 @@ def get_gains_matrix(coins_list):
 
 def start_game(dataset):
     gains_matrix =  get_gains_matrix(dataset)
-    coins = reconstruct_solution(dataset, gains_matrix)
-    coins_sophia = []
-    coins_mateo = []
-    for i in range(len(coins)):
-        if i % 2 == 0: # Siempre empieza Sophia agarrando la primera moneda
-            coins_sophia.append(coins[i])
-        else:
-            coins_mateo.append(coins[i])    
+    coins_sophia, coins_mateo = reconstruct_solution(dataset, gains_matrix)
+#    for i in range(len(coins)):
+#        if i % 2 == 0: # Siempre empieza Sophia agarrando la primera moneda
+#            coins_sophia.append(coins[i])
+#        else:
+#            coins_mateo.append(coins[i])    
 
     return gains_matrix[0][len(dataset)-1], coins_sophia, coins_mateo
 

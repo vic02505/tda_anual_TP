@@ -1,4 +1,4 @@
 Ganancia total de Sophia: 2338
-Monedas obtenidas por Sophia: [145,482,362,781,568]
+Monedas obtenidas por Sophia: [145,781,568,362,482]
 Ganancia total de Mateo: 1780
-Monedas obtenidas por Mateo: [19,201,520,706,334]
+Monedas obtenidas por Mateo: [520,334,706,201,19]
