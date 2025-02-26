@@ -32,17 +32,18 @@ python3 main.py <flag_obligatorio> <flag_opcional>
    - **"-g"** para ejecutar el algoritmo greedy con los datasets locales.
    - **"-d"** para ejecutar el algoritmo de programación dinámica con los datasets locales.
    - **"-b"** para ejecutar el algoritmo de backtracking con los datasets locales.
+   - **"-ap"** para ejecutar el algoritmo de aproximación con los datasets locales.
 
 - <flag_opcional>:
 
-    - **"-e"**: Colocar únicamente después de **"-g"**, **"-d"** o **"-b"** para los casos de uso externos.
+    - **"-e"**: Colocar únicamente después de **"-g"**, **"-d"**, **"-ap"** o **"-b"** para los casos de uso externos.
   
 **IMPORTANTE:** Para ejecutar los algoritmos con los datasets externos, es necesarios incluir dichos datasets
 en las carpetas correspondientes.
 
 1. Algoritmos greedy: **part_I/extern_datasets** (path desde la carpeta raíz del proyecto).
 2. Programación dinámica: **part_II/extern_datasets** (path desde la carpeta raíz del proyecto).
-3. Backtracking: **part_III/extern_datasets** (path desde la carpeta raíz del proyecto).
+3. Backtracking y aproximación: **part_III/extern_datasets** (path desde la carpeta raíz del proyecto).
 
 # Salidas del proyecto
 
