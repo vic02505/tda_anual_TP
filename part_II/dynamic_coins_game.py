@@ -56,7 +56,7 @@ def best_next_coin(i, j, gains_matrix, coins_list):
 def reconstruct_solution(coins_list, gains_matrix):
     i = 0 
     j = len(coins_list) - 1
-    choices_sophia = []  # Lista para almacenar el orden de elecciones de monedas
+    choices_sophia = []  # Lista para almacenar el orden de elecciones de monedas de Sophia
     choices_mateo = []
 
     while i <= j:
