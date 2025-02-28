@@ -5,11 +5,8 @@ Buenos Aires.
 
 | Integrante                | Padrón   | Mail                 |
 |---------------------------|----------|----------------------|
-| Juan Francisco Cuevas     | 107963   | jcuevas@fi.uba.ar    |
 | Mateo Lardiez             | 107992   | mlardiez@fi.uba.ar   |
 | Tomás Vainstein Aranguren | 109043   | tvainstein@fi.uba.ar |
-| Julián Gorge              | 104286   | jgorge@fi.uba.ar     |
-| Víctor Zacarías           | 107080   | vzacarias@fi.uba.ar  |
 
 
 # Descripción del trabajo
