@@ -3,7 +3,7 @@ from common_libs.datasets_parser_partIII import parse_dataset
 HORIZONTAL = "horizontal"
 VERTICAL = "vertical"
 
-
+# verifica que la posicion en el tablero sea valida
 def pos_valida(board, r, c):
     if board[r][c] != 0:
         return False
@@ -44,6 +44,10 @@ def position_vertical(board, row, col, ship_len, ship_id, row_demand, col_demand
         row_demand[r] -= 1
     col_demand[col] -= ship_len
 
+# clonamos las demandas para ir actualizandolas mientras se ubicna
+# los barcos y se generan posiciones candidatas en las filas y columnas
+# siempre y cuando la demanda restante sea mayor o igual al largo
+# del barco
 def battleship_approximation(n, m, row_demand, col_demand, ships):
     ships = sorted(ships, reverse=True)
 
@@ -70,18 +74,21 @@ def battleship_approximation(n, m, row_demand, col_demand, ships):
         for position, orientation, _ in possible_positions:
             if orientation == HORIZONTAL:
                 for col in range(m - ship + 1):
+                    if not all(col_demand_available[c] >= 1 for c in range(col, col + ship)):
+                        continue
                     if horizontal_pos_available(game_board, position, col, ship):
                         position_horizontal(game_board, position, col, ship, ship_id, row_demand_available, col_demand_available)
-                        ships_in_game.append(ship)
                         in_game = True
                         break
             elif orientation == VERTICAL:
                 for row in range(n - ship + 1):
+                    if not all(row_demand_available[r] >= 1 for r in range(row, row + ship)):
+                        continue
                     if vertical_pos_available(game_board, row, position, ship):
                         position_vertical(game_board, row, position, ship, ship_id, row_demand_available, col_demand_available)
-                        ships_in_game.append(ship)
                         in_game = True
                         break
+            ships_in_game.append(ship)
             if in_game:
                 break
 

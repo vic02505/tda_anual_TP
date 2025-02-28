@@ -9,7 +9,7 @@ OUTPUTS_DIRECTORY = "algorithms_output"
 def generate_content_for_approx(output):
     game_board, approx_score = output
     board_str = "\n".join(",".join(map(str, row)) for row in game_board)
-    content = board_str + "\n\nPuntaje de Aproximacioon: " + str(approx_score) + "\n"
+    content = board_str + "\n\nPuntaje de Aproximacion: " + str(approx_score) + "\n"
     return content
 
 
